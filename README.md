@@ -11,7 +11,7 @@ Contao extension to allow registration for events.
 
 After installation you will have the possibility to enable registration for individual events in the event's settings:
 
-<img src="https://raw.githubusercontent.com/inspiredminds/contao-event-registration/master/event-settings.png" width="734" alt="Event settings">
+<img src="https://raw.githubusercontent.com/inspiredminds/contao-event-registration/main/event-settings.png" width="734" alt="Event settings">
 
 - **Registration form**: Select a form from the form generator which will be used for the registration. All the form's data will be saved for each registration. The form is processed as usual, i. e. notifications emails are also sent.
 - **Minimum amount of participants**: You can define an optional minimum amount of participants, which you can then display in the front end (together with the currently registered participants).
@@ -70,19 +70,19 @@ This also applies to the template variables mentioned above. They will always re
 
 For each event there is an additional icon in the event list in the back end.
 
-<img src="https://raw.githubusercontent.com/inspiredminds/contao-event-registration/master/event-list.png" width="704" alt="Event list">
+<img src="https://raw.githubusercontent.com/inspiredminds/contao-event-registration/main/event-list.png" width="704" alt="Event list">
 
 This allows you to list the registrations for each event.
 
-<img src="https://raw.githubusercontent.com/inspiredminds/contao-event-registration/master/event-registrations.png" width="736" alt="Event registrations">
+<img src="https://raw.githubusercontent.com/inspiredminds/contao-event-registration/main/event-registrations.png" width="736" alt="Event registrations">
 
 Within the list, you can view the details of the event registration using the info icon. You can also edit some properties of the event, like the amount of people for this registration and whether it has been confirmed or cancelled.
 
-<img src="https://raw.githubusercontent.com/inspiredminds/contao-event-registration/master/event-registration.png" width="734" alt="Event registration">
+<img src="https://raw.githubusercontent.com/inspiredminds/contao-event-registration/main/event-registration.png" width="734" alt="Event registration">
 
 The overview also allows you to export the registrations as a CSV. The export allows you to configure the delimiter (either `,` or `;`) and it allows you to export a Microsoft Excel compatible CSV.
 
-<img src="https://raw.githubusercontent.com/inspiredminds/contao-event-registration/master/export.png" width="736" alt="Event registration export">
+<img src="https://raw.githubusercontent.com/inspiredminds/contao-event-registration/main/export.png" width="736" alt="Event registration export">
 
 
 ## User Defined Amount
