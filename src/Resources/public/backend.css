@@ -1,0 +1,5 @@
+.event_registration_export {
+    float: left;
+    padding: 3px 0 3px 21px;
+    background: url('/assets/contao/images/iconCSV.svg') no-repeat left center;
+}

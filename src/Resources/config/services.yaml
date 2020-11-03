@@ -1,0 +1,10 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        bind:
+            $nodeManager: '@terminal42_node.manager'
+    
+    InspiredMinds\ContaoEventRegistration\:
+        resource: ../../
+        exclude: ../../{Model,DependencyInjection,Resources}

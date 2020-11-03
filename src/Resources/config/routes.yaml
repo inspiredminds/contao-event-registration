@@ -1,0 +1,3 @@
+im_contao_event_registration:
+    resource: ../../Controller
+    type: annotation
