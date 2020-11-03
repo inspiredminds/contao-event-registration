@@ -1,0 +1,15 @@
+cannot_register: Die Registrierung zu diesem Event ist nicht mehr möglich.
+reg_uuid: UUID
+reg_eventid: Event ID
+reg_eventtitle: Event Titel
+reg_amount: Personenanzahl
+reg_confirmed: Registrierung bestätigt
+reg_cancelled: Registrierung storniert
+export: Export
+event_registration_export: Export der Registrierungen für "event"
+delimiter_comma: '<code>,</code> (Komma)'
+delimiter_semi: '<code>;</code> (Semikolon)'
+already_confirmed: Diese Registrierung wurde bereits bestätigt.
+already_cancelled: Diese Registrierung wurde bereits storniert.
+cannot_confirm: Registrierungen für dieses Event können nicht mehr bestätigt werden.
+cannot_cancel: Anemdlungen für dieses Event können nicht mehr storniert werden.

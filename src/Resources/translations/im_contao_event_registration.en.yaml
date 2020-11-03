@@ -11,5 +11,5 @@ delimiter_comma: '<code>,</code> (Comma)'
 delimiter_semi: '<code>;</code> (Semicolon)'
 already_confirmed: This event registration has already been confirmed.
 already_cancelled: This event registration has already been cancelled.
-cannot_confirm: Registrations for this cannot be confirmed anymore.
-cannot_cancel: Registrations for this cannot be cancelled anymore.
+cannot_confirm: Registrations for this event cannot be confirmed anymore.
+cannot_cancel: Registrations for this event cannot be cancelled anymore.
