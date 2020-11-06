@@ -24,8 +24,6 @@ class ConfigOnShowCallbackListener
 {
     public function __invoke(array $show, array $row, DataContainer $dc): array
     {
-        dump($show, $row);
-
         foreach ($show as &$c) {
             foreach ($c as &$table) {
                 foreach ($table as $k => $v) {
