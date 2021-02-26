@@ -12,8 +12,8 @@
         }
     ],
 	"support": {
-		"issues": "https://github.com/inspiredminds/contao-remember-language/issues",
-		"source": "https://github.com/inspiredminds/contao-remember-language",
+		"issues": "https://github.com/inspiredminds/contao-event-registration/issues",
+		"source": "https://github.com/inspiredminds/contao-event-registration",
 		"forum": "https://community.contao.org/de"
 	},
 	"funding": [
