@@ -71,7 +71,7 @@ class EventRegistrationConfirmController extends AbstractFrontendModuleControlle
         $template->registration = $registration;
         $template->content = function () use ($model): ?string {
             if ($nodes = StringUtil::deserialize($model->nodes, true)) {
-                return $this->nodeManager->generateMultiple($nodes);
+                return implode('', $this->nodeManager->generateMultiple($nodes));
             }
 
             return null;
