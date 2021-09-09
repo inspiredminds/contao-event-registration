@@ -54,6 +54,7 @@ Within notifications, _as well as the node content of the confirmation and cance
 
 - `##event_*##`: All variables of the event.
 - `##reg_*##`: All variables of the registration.
+- `##reg_amount##`: The amount of people for one registration.
 - `##reg_count##`: The respective registration count.
 - `##reg_confirm_url##`: The URL with which the registration can be confirmed.
 - `##reg_cancel_url##`: The URL with which the registration can be cancelled.
