@@ -37,6 +37,7 @@ class ConfigOnLoadCallbackListener
             ->removeField('reg_max')
             ->removeField('reg_regEnd')
             ->removeField('reg_cancelEnd')
+            ->removeField('reg_requireConfirm')
             ->applyToSubPalette('reg_enable', 'tl_calendar_events')
         ;
     }
