@@ -55,8 +55,6 @@ class EventRegistrationFormListener
         $registration->form = (int) $form->id;
         $registration->member = $member ? (int) $member->id : 0;
         $registration->amount = (int) $submittedData['amount'] ?: 1;
-
-        unset($submittedData['amount']);
         $registration->form_data = json_encode($submittedData);
 
         $registration->save();
