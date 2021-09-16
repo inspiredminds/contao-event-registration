@@ -41,7 +41,7 @@ class ConfigOnLoadCallbackListener
         }
 
         $mainEvent = $this->eventRegistration->getMainEvent($event);
-        dump($GLOBALS['TL_DCA']['tl_calendar_events']['fields']['languageMain']);
+
         if ((int) $mainEvent->id === (int) $event->id) {
             return;
         }
