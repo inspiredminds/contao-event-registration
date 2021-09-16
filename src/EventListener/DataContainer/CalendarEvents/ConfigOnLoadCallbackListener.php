@@ -16,6 +16,7 @@ use Contao\CalendarEventsModel;
 use Contao\CoreBundle\DataContainer\PaletteManipulator;
 use Contao\CoreBundle\ServiceAnnotation\Callback;
 use Contao\DataContainer;
+use InspiredMinds\ContaoEventRegistration\EventRegistration;
 
 /**
  * Removes some fields if the event is not the main record.
@@ -24,11 +25,24 @@ use Contao\DataContainer;
  */
 class ConfigOnLoadCallbackListener
 {
+    private $eventRegistration;
+
+    public function __construct(EventRegistration $eventRegistration)
+    {
+        $this->eventRegistration = $eventRegistration;
+    }
+
     public function __invoke(DataContainer $dc): void
     {
         $event = CalendarEventsModel::findById($dc->id);
 
-        if (null === $event || empty($event->languageMain)) {
+        if (null === $event) {
+            return;
+        }
+
+        $mainEvent = $this->eventRegistration->getMainEvent($event);
+        dump($GLOBALS['TL_DCA']['tl_calendar_events']['fields']['languageMain']);
+        if ((int) $mainEvent->id === (int) $event->id) {
             return;
         }
 

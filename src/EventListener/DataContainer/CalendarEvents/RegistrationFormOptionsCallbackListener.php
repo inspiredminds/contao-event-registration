@@ -39,7 +39,7 @@ class RegistrationFormOptionsCallbackListener
             return [];
         }
 
-        $forms = $this->db->executeQuery("SELECT id, title FROM tl_form ORDER BY title")->fetchAll();
+        $forms = $this->db->executeQuery('SELECT id, title FROM tl_form ORDER BY title')->fetchAll();
 
         if (false === $forms) {
             return [];

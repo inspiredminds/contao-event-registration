@@ -59,8 +59,7 @@ class ChildRecordCallbackListener
 
         if ($row['cancelled']) {
             $icon = 'unpublished.svg';
-        }
-        elseif ($row['confirmed']) {
+        } elseif ($row['confirmed']) {
             $icon = 'visible.svg';
         }
 

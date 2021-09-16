@@ -17,6 +17,7 @@ $GLOBALS['TL_DCA']['tl_event_registration'] = [
         'dataContainer' => 'Table',
         'ptable' => 'tl_calendar_events',
         'closed' => true,
+        'doNotCopyRecords' => true,
         'sql' => [
             'keys' => [
                 'id' => 'primary',

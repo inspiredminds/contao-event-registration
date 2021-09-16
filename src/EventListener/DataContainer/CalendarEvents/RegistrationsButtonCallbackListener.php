@@ -13,10 +13,12 @@ declare(strict_types=1);
 namespace InspiredMinds\ContaoEventRegistration\EventListener\DataContainer\CalendarEvents;
 
 use Contao\Backend;
+use Contao\CalendarEventsModel;
 use Contao\CoreBundle\ServiceAnnotation\Callback;
 use Contao\Image;
 use Contao\Input;
 use Contao\StringUtil;
+use InspiredMinds\ContaoEventRegistration\EventRegistration;
 use InspiredMinds\ContaoEventRegistration\Model\EventRegistrationModel;
 
 /**
@@ -26,11 +28,20 @@ use InspiredMinds\ContaoEventRegistration\Model\EventRegistrationModel;
  */
 class RegistrationsButtonCallbackListener
 {
+    private $eventRegistration;
+
+    public function __construct(EventRegistration $eventRegistration)
+    {
+        $this->eventRegistration = $eventRegistration;
+    }
+
     public function __invoke(array $row, ?string $href, string $label, string $title, ?string $icon, string $attributes): string
     {
-        $href = Backend::addToUrl($href.'&amp;id='.($row['languageMain'] ?: $row['id']).(Input::get('nb') ? '&amp;nc=1' : ''));
+        $mainEvent = $this->eventRegistration->getMainEvent(CalendarEventsModel::findById($row['id']));
 
-        if (0 === EventRegistrationModel::countByPid((int) ($row['languageMain'] ?: $row['id']))) {
+        $href = Backend::addToUrl($href.'&amp;id='.$mainEvent->id.(Input::get('nb') ? '&amp;nc=1' : ''));
+
+        if (0 === EventRegistrationModel::countByPid((int) $mainEvent->id)) {
             $icon = 'mgroup_.svg';
         }
 

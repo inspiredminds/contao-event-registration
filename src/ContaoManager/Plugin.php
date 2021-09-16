@@ -30,7 +30,7 @@ class Plugin implements BundlePluginInterface, RoutingPluginInterface
             BundleConfig::create(ContaoEventRegistrationBundle::class)
                 ->setLoadAfter([
                     ContaoCalendarBundle::class,
-                    'notification_center'
+                    'notification_center',
                 ]),
         ];
     }

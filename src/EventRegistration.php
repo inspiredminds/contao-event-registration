@@ -64,12 +64,13 @@ class EventRegistration
             return $this->getRegistrationCount($event);
         };
 
-        if (!empty($event->languageMain)) {
-            $event = $this->getMainEvent($event);
-            $template->reg_min = $event->reg_min;
-            $template->reg_max = $event->reg_max;
-            $template->reg_regEnd = $event->reg_regEnd;
-            $template->reg_cancelEnd = $event->reg_cancelEnd;
+        $mainEvent = $this->getMainEvent($event);
+
+        if ((int) $mainEvent->id !== (int) $event->id) {
+            $template->reg_min = $mainEvent->reg_min;
+            $template->reg_max = $mainEvent->reg_max;
+            $template->reg_regEnd = $mainEvent->reg_regEnd;
+            $template->reg_cancelEnd = $mainEvent->reg_cancelEnd;
         }
     }
 
@@ -217,6 +218,12 @@ class EventRegistration
     public function getMainEvent(CalendarEventsModel $event): CalendarEventsModel
     {
         if (empty($event->languageMain)) {
+            return $event;
+        }
+
+        $calendar = CalendarModel::findByPk((int) $event->pid);
+
+        if (null === $calendar || empty($calendar->master)) {
             return $event;
         }
 

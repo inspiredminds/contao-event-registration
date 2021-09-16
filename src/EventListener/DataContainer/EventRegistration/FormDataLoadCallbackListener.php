@@ -21,6 +21,6 @@ class FormDataLoadCallbackListener
 {
     public function __invoke($value): string
     {
-        return json_encode(json_decode($value ?? '') ?: [], JSON_PRETTY_PRINT);
+        return json_encode(json_decode($value ?? '') ?: [], \JSON_PRETTY_PRINT);
     }
 }
