@@ -23,6 +23,7 @@ use Doctrine\DBAL\Connection;
 use InspiredMinds\ContaoEventRegistration\Controller\FrontendModule\EventRegistrationCancelController;
 use InspiredMinds\ContaoEventRegistration\Controller\FrontendModule\EventRegistrationConfirmController;
 use InspiredMinds\ContaoEventRegistration\Model\EventRegistrationModel;
+use Terminal42\ChangeLanguage\Terminal42ChangeLanguageBundle;
 
 class EventRegistration
 {
@@ -37,10 +38,12 @@ class EventRegistration
     ];
 
     private $db;
+    private $bundles;
 
-    public function __construct(Connection $db)
+    public function __construct(Connection $db, array $bundles)
     {
         $this->db = $db;
+        $this->bundles = $bundles;
     }
 
     /**
@@ -217,12 +220,19 @@ class EventRegistration
      */
     public function getMainEvent(CalendarEventsModel $event): CalendarEventsModel
     {
+        // No main event defined
         if (empty($event->languageMain)) {
+            return $event;
+        }
+
+        // If changelanguage is not installed, no main event exists
+        if (!isset($this->bundles['changelanguage']) && !\in_array(Terminal42ChangeLanguageBundle::class, $this->bundles, true)) {
             return $event;
         }
 
         $calendar = CalendarModel::findByPk((int) $event->pid);
 
+        // If the calendar is not configured properly, no main event exists
         if (null === $calendar || empty($calendar->master)) {
             return $event;
         }

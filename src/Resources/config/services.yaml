@@ -4,6 +4,7 @@ services:
         autoconfigure: true
         bind:
             $nodeManager: '@terminal42_node.manager'
+            $bundles: '%kernel.bundles%'
     
     InspiredMinds\ContaoEventRegistration\:
         resource: ../../
