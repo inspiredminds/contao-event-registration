@@ -69,12 +69,10 @@ class EventRegistration
 
         $mainEvent = $this->getMainEvent($event);
 
-        if ((int) $mainEvent->id !== (int) $event->id) {
-            $template->reg_min = $mainEvent->reg_min;
-            $template->reg_max = $mainEvent->reg_max;
-            $template->reg_regEnd = $mainEvent->reg_regEnd;
-            $template->reg_cancelEnd = $mainEvent->reg_cancelEnd;
-        }
+        $template->reg_min = $mainEvent->reg_min;
+        $template->reg_max = $mainEvent->reg_max;
+        $template->reg_regEnd = $mainEvent->reg_regEnd;
+        $template->reg_cancelEnd = $mainEvent->reg_cancelEnd;
     }
 
     public function canRegister(CalendarEventsModel $event): bool
