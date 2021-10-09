@@ -120,16 +120,7 @@ class EventRegistration
 
         $query .= ';';
 
-        $sum = $this->db
-            ->executeQuery($query, [(int) $event->id])
-            ->fetchColumn()
-        ;
-
-        if (false === $sum) {
-            return 0;
-        }
-
-        return (int) $sum;
+        return (int) $this->db->fetchOne($query, [(int) $event->id]);
     }
 
     public function getRegistrationForm(CalendarEventsModel $event): string

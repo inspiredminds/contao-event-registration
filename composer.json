@@ -27,6 +27,7 @@
         "contao/core-bundle": "^4.9",
         "contao/calendar-bundle": "^4.9",
         "contao-components/contao": ">=7.1.6",
+        "doctrine/dbal": "^2.11 || ^3.0",
         "inspiredminds/contao-backend-forms": ">=0.3, <1",
         "league/csv": "^9.6",
         "ramsey/uuid": "^3.0 || ^4.0",
