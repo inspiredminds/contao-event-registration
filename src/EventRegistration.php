@@ -170,8 +170,6 @@ class EventRegistration
      */
     public function getSimpleTokens(CalendarEventsModel $event, ?EventRegistrationModel $registration = null): array
     {
-        $event = $this->getMainEvent($event);
-
         $tokens = [];
 
         Controller::loadDataContainer('tl_calendar_events');
