@@ -12,4 +12,5 @@ delimiter_semi: '<code>;</code> (Semikolon)'
 already_confirmed: Diese Registrierung wurde bereits bestätigt.
 already_cancelled: Diese Registrierung wurde bereits storniert.
 cannot_confirm: Registrierungen für dieses Event können nicht mehr bestätigt werden.
-cannot_cancel: Anemdlungen für dieses Event können nicht mehr storniert werden.
+cannot_cancel: Anmeldungen für dieses Event können nicht mehr storniert werden.
+header_count_title: Anmeldungen
