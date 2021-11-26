@@ -38,7 +38,7 @@ class EventRegistrationFormController extends AbstractFrontendModuleController
     {
         $event = $this->eventRegistration->getCurrentEvent();
 
-        if (null === $event) {
+        if (null === $event || !$event->reg_enable) {
             return new Response();
         }
 
