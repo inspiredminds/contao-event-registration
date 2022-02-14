@@ -45,6 +45,11 @@ class EventRegistrationFormListener
         }
 
         $event = $this->getEvent(true);
+
+        if (null === $event || !$this->eventRegistration->canRegister($event)) {
+            return;
+        }
+
         $member = $this->getMember();
 
         $registration = new EventRegistrationModel();
