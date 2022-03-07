@@ -23,35 +23,34 @@ class ChildRecordCallbackListener
 {
     public function __invoke(array $row): string
     {
-        $record = $row['id'];
-
         $list = &$GLOBALS['TL_DCA']['tl_event_registration']['list']['label'] ?? null;
+        $record = null;
 
-        if (null === $list) {
-            return $this->wrapRecord($record);
-        }
+        // Build record according to DCA config
+        if (null !== $list && !empty($list['fields']) && !empty($list['format'])) {
+            $fieldData = [];
+            $formData = json_decode($row['form_data'] ?? '', true) ?: [];
 
-        if (empty($list['fields']) || empty($list['format'])) {
-            return $this->wrapRecord($record);
-        }
+            foreach ($list['fields'] as $labelField) {
+                if (isset($row[$labelField])) {
+                    $fieldData[] = $row[$labelField];
+                    continue;
+                }
 
-        $fieldData = [];
-        $formData = json_decode($row['form_data'] ?? '', true) ?: [];
-
-        foreach ($list['fields'] as $labelField) {
-            if (isset($row[$labelField])) {
-                $fieldData[] = $row[$labelField];
-                continue;
+                if (isset($formData[$labelField])) {
+                    $fieldData[] = $formData[$labelField];
+                }
             }
 
-            if (isset($formData[$labelField])) {
-                $fieldData[] = $formData[$labelField];
+            try {
+                $record = vsprintf($list['format'], $fieldData);
+            } catch (\ValueError $e) {
+                // Ignore value errors
             }
         }
 
-        $record = @sprintf($list['format'], ...$fieldData);
-
-        if (!$record) {
+        // Show all form data values as a fallback
+        if (empty($record)) {
             $record = StringUtil::substr(implode(', ', array_filter($formData)), 128);
         }
 
@@ -65,11 +64,6 @@ class ChildRecordCallbackListener
 
         $record = Image::getHtml($icon, '', ' style="float:left; margin-right:0.3em;"').' '.$record;
 
-        return $this->wrapRecord($record);
-    }
-
-    private function wrapRecord(string $record): string
-    {
         return '<div class="tl_content_left">'.$record.'</div>';
     }
 }

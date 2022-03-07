@@ -32,9 +32,11 @@ return (new PhpCsFixer\Config())
         'escape_implicit_backslashes' => true,
         'fully_qualified_strict_types' => true,
         'general_phpdoc_annotation_remove' => [
-            'author',
-            'expectedException',
-            'expectedExceptionMessage',
+            'annotations' => [
+                'author',
+                'expectedException',
+                'expectedExceptionMessage',
+            ],
         ],
         'header_comment' => ['header' => $header],
         'heredoc_to_nowdoc' => true,
