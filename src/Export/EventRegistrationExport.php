@@ -70,7 +70,7 @@ class EventRegistrationExport
                 if (isset($config['foreignKey'])) {
                     [$foreignTable, $foreignLabelField] = explode('.', $config['foreignKey'], 2);
 
-                    $foreignLabel = $this->db->executeQuery('SELECT '.$foreignLabelField.' FROM '.$foreignTable.' WHERE id = ?', [$value])->fetchColumn();
+                    $foreignLabel = $this->db->executeQuery('SELECT '.$foreignLabelField.' FROM '.$foreignTable.' WHERE id = ?', [$value])->fetchOne();
 
                     if ($foreignLabel) {
                         $value = $foreignLabel;
