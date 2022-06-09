@@ -28,10 +28,25 @@ The extension provides three new event modules:
 - Event registration form
 - Event registration confirmation
 - Event registration cancellation
+- Event registration list
 
 All of these modules are optional. The _Event registration form_ will need to be inserted on the same page as the event reader module and it will display the event registration form, if the event has registration enabled. Alternatively this form is also available as [template variables](#template-variables) within event templates.
 
 The confirmation and cancellation forms can be inserted on other pages. In that case you also need to specify those pages in the settings of the calendar. Otherwise it is assumed that those modules are also present on the event reader page. The modules allow you to define a _node_ for detailed content. This content will be displayed, when an event registration has been successfully confirmed or cancelled. You are also able to select a notification that will be sent after succesful cancellation or confirmation. If you do not need either confirmation or cancellation functionality, these modules do not need to be created.
+
+The _Event registration list_ module can be used to display a list of registrations for the current event on the event reader page. The list will show only confirmed registrations, if the registration confirmation is enabled and it will also not show any cancelled registrations. By default the `mod_event_registration_list` template will use an automatically generated label for each entry according to the [`list.label`](https://docs.contao.org/dev/reference/dca/list/#labels) configuration of the `tl_event_registration` DCA. The default configuration uses the fields `firstname` and `lastname` - however, if your own form does not have these values, you will need to create a custom `mod_even_registration_list` template and output the correct field(s) accordingly. All of the submitted values of the registration form for each registration are available under the `form_data` key. For example:
+
+```php
+<?php $this->extend('block_unsearchable'); ?>
+
+<?php $this->block('content'); ?>
+  <ul>
+    <?php foreach ($this->registrations as $registration): ?>
+      <li><?= $registration->form_data->my_form_field ?></li>
+    <?php endforeach; ?>
+  </ul>
+<?php $this->endblock(); ?>
+```
 
 
 ### Template Variables
@@ -84,6 +99,19 @@ Within the list, you can view the details of the event registration using the in
 The overview also allows you to export the registrations as a CSV. The export allows you to configure the delimiter (either `,` or `;`) and it allows you to export a Microsoft Excel compatible CSV.
 
 <img src="https://raw.githubusercontent.com/inspiredminds/contao-event-registration/main/export.png" width="736" alt="Event registration export">
+
+
+### Backend Configuration
+
+The event registration list in the back end (as well as in the front end module) uses the fields `firstname` and `lastname` by default. However, if your event registration form does not have these fields, you might want to adjust the DCA configuration so that it will show a label suitable to your needs in the back end. For example if your form uses the fields `vorname`, `nachname` and `email` you could configure the back end labels as follows:
+
+```php
+// contao/dca/tl_event_registration.php
+$GLOBALS['TL_DCA']['tl_event_registration']['list']['label']['fields'] = ['vorname', 'nachname', 'email'];
+$GLOBALS['TL_DCA']['tl_event_registration']['list']['label']['format'] = '%s %s (%s)';
+```
+
+Be advised that this also affects the default labels of the _Event registration list_ front end module.
 
 
 ## User Defined Amount

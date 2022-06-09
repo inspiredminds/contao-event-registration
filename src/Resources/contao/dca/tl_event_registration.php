@@ -90,8 +90,8 @@ $GLOBALS['TL_DCA']['tl_event_registration'] = [
             'panelLayout' => 'limit',
         ],
         'label' => [
-            'fields' => ['firstname', 'lastname', 'email'],
-            'format' => '%s %s, %s',
+            'fields' => ['firstname', 'lastname'],
+            'format' => '%s %s',
         ],
         'global_operations' => [
             'export' => [

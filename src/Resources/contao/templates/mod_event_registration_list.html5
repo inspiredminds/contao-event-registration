@@ -1,0 +1,9 @@
+<?php $this->extend('block_unsearchable'); ?>
+
+<?php $this->block('content'); ?>
+  <ul>
+    <?php foreach ($this->registrations as $registration): ?>
+      <li><?= $registration->label ?></li>
+    <?php endforeach; ?>
+  </ul>
+<?php $this->endblock(); ?>
