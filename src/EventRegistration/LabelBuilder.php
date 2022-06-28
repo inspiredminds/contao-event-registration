@@ -64,6 +64,11 @@ class LabelBuilder
 
             try {
                 $label = vsprintf($list['format'], $fieldData);
+
+                // vsprintf returns false in PHP <8 (see #9)
+                if (false === $label) {
+                    $label = null;
+                }
             } catch (\ValueError $e) {
                 // Ignore value errors
             }
