@@ -66,9 +66,6 @@ class EventRegistrationExportController
         /** @var AttributeBagInterface $backendSession */
         $backendSession = $this->session->getBag('contao_backend');
 
-        // Add some backend CSS
-        // $GLOBALS['TL_CSS'][] = 'bundles/conference/backend.css';
-
         // Get the form
         $form = $this->buildForm($request, $backendSession);
 

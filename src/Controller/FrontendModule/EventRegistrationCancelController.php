@@ -16,6 +16,7 @@ use Contao\CalendarEventsModel;
 use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
 use Contao\CoreBundle\Exception\PageNotFoundException;
 use Contao\CoreBundle\ServiceAnnotation\FrontendModule;
+use Contao\CoreBundle\String\SimpleTokenParser;
 use Contao\ModuleModel;
 use Contao\StringUtil;
 use Contao\Template;
@@ -38,15 +39,17 @@ class EventRegistrationCancelController extends AbstractFrontendModuleController
     private $eventRegistration;
     private $nodeManager;
     private $translator;
+    private $simpleTokenParser;
 
-    public function __construct(EventRegistration $eventRegistration, NodeManager $nodeManager, TranslatorInterface $translator)
+    public function __construct(EventRegistration $eventRegistration, NodeManager $nodeManager, TranslatorInterface $translator, SimpleTokenParser $simpleTokenParser)
     {
         $this->eventRegistration = $eventRegistration;
         $this->nodeManager = $nodeManager;
         $this->translator = $translator;
+        $this->simpleTokenParser = $simpleTokenParser;
     }
 
-    protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
+    protected function getResponse(Template $template, ModuleModel $model, Request $request): Response
     {
         $uuid = $request->query->get('uuid');
         $action = $request->query->get('action');
@@ -81,7 +84,7 @@ class EventRegistrationCancelController extends AbstractFrontendModuleController
 
         $this->processCancel($template, $model, $event, $registration, $tokens);
 
-        return new Response(StringUtil::parseSimpleTokens($template->parse(), $tokens));
+        return new Response($this->simpleTokenParser->parse($template->parse(), $tokens));
     }
 
     private function processCancel(Template $template, ModuleModel $model, CalendarEventsModel $event, EventRegistrationModel $registration, array $tokens): void
