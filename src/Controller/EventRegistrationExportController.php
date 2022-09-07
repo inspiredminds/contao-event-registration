@@ -127,7 +127,11 @@ class EventRegistrationExportController
             'default' => $backendSession->get('event_registration_export_excel') ?? false,
         ]);
 
-        $form->addSubmitFormField('submit', $this->translator->trans('export', [], 'im_contao_event_registration'));
+        if (class_exists(CodefogHasteBundle::class)) {
+            $form->addSubmitFormField($this->translator->trans('export', [], 'im_contao_event_registration'));
+        } else {
+            $form->addSubmitFormField('submit', $this->translator->trans('export', [], 'im_contao_event_registration'));
+        }
 
         return $form;
     }
