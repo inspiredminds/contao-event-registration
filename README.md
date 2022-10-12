@@ -49,6 +49,13 @@ The _Event registration list_ module can be used to display a list of registrati
 ```
 
 
+### Calendar Settings
+
+As mentioned above there will also be additional settings in your calendars. Per calendar you can configure the redirect page for confirmations as well as the redirect page for cancellations. On these respective pages you then add either the _Event registration confirmation_ module or _Event registration cancellation_ module, if needed.
+
+<img src="https://raw.githubusercontent.com/inspiredminds/contao-event-registration/main/calendar-settings.png" width="778" alt="Calendar settings">
+
+
 ### Template Variables
 
 The following template variables are available in event templates as well as the template for the event registration form:
