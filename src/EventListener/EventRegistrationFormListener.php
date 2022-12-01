@@ -52,7 +52,18 @@ class EventRegistrationFormListener
 
         $member = $this->getMember();
 
-        $registration = new EventRegistrationModel();
+        // check if registration exists
+        $registration = EventRegistrationModel::findOneBy(['pid = ?', 'member = ?'], [(int) $event->id, (int) $member->id]);
+
+        if (null !== $registration) {
+            $registration->cancelled = 0;
+        }
+
+        if (null === $registration) {
+            $registration = new EventRegistrationModel();
+            $registration->created = time();
+        }
+
         $registration->pid = (int) $event->id;
         $registration->created = time();
         $registration->tstamp = time();
