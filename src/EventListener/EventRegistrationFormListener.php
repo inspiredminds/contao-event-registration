@@ -65,7 +65,6 @@ class EventRegistrationFormListener
         }
 
         $registration->pid = (int) $event->id;
-        $registration->created = time();
         $registration->tstamp = time();
         $registration->uuid = Uuid::uuid4()->toString();
         $registration->form = (int) $form->id;
