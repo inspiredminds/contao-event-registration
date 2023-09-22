@@ -36,6 +36,7 @@ use Twig\Environment;
  *   defaults={"_scope": "backend"},
  *   requirements={"eventId": "\d+"}
  * )
+ *
  * @ServiceTag("controller.service_arguments")
  */
 class EventRegistrationExportController

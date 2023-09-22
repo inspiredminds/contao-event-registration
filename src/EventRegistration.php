@@ -159,7 +159,7 @@ class EventRegistration
     /**
      * Creates a simple token array with the given even data and optionally event registration data.
      */
-    public function getSimpleTokens(CalendarEventsModel $event, ?EventRegistrationModel $registration = null): array
+    public function getSimpleTokens(CalendarEventsModel $event, EventRegistrationModel $registration = null): array
     {
         $tokens = [];
 

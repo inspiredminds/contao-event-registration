@@ -27,7 +27,7 @@ class ConfigOnShowCallbackListener
         foreach ($show as &$c) {
             foreach ($c as &$table) {
                 foreach ($table as $k => $v) {
-                    if (false !== strpos($k, 'form_data')) {
+                    if (str_contains($k, 'form_data')) {
                         unset($table[$k]);
                         break;
                     }

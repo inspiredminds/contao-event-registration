@@ -32,7 +32,7 @@ class EventParseTemplateListener
 
     public function __invoke(Template $template): void
     {
-        if (empty($template->calendar) || 0 !== strpos($template->getName(), 'event')) {
+        if (empty($template->calendar) || !str_starts_with($template->getName(), 'event')) {
             return;
         }
 
