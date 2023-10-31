@@ -37,11 +37,12 @@ class ConfigOnShowCallbackListener
 
         $formData = json_decode($row['form_data'] ?? '', true) ?? [];
         $form = FormModel::findById((int) $row['form']);
+        $t = FormModel::getTable();
 
         foreach ($formData as $name => $value) {
             $label = '- <small>'.$name.'</small>';
 
-            if (null !== $form && null !== ($formField = FormFieldModel::findBy(['pid = ?', 'name = ?'], [$form->id, $name])) && !empty($formField->label)) {
+            if (null !== $form && null !== ($formField = FormFieldModel::findBy(["$t.pid = ?", "$t.name = ?"], [$form->id, $name])) && !empty($formField->label)) {
                 $label = $formField->label.' <small>'.$name.'</small>';
             }
 
