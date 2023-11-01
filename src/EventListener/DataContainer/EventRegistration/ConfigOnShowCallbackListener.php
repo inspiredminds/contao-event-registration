@@ -37,7 +37,7 @@ class ConfigOnShowCallbackListener
 
         $formData = json_decode($row['form_data'] ?? '', true) ?? [];
         $form = FormModel::findById((int) $row['form']);
-        $t = FormModel::getTable();
+        $t = FormFieldModel::getTable();
 
         foreach ($formData as $name => $value) {
             $label = '- <small>'.$name.'</small>';
