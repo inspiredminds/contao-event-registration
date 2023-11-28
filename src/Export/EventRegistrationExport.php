@@ -64,7 +64,7 @@ class EventRegistrationExport
 
             foreach ($header as $headerField) {
                 $value = $record->{$headerField};
-                $config = $fieldConfig[$headerField];
+                $config = $fieldConfig[$headerField] ?? [];
 
                 // Retrieve the label for the related record
                 if (isset($config['foreignKey'])) {

@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace InspiredMinds\ContaoEventRegistration\Controller;
 
+use Codefog\HasteBundle\CodefogHasteBundle;
 use Contao\CalendarEventsModel;
 use Contao\CoreBundle\Exception\PageNotFoundException;
-use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Message;
 use Contao\System;
 use InspiredMinds\ContaoBackendFormsBundle\Form\BackendForm;
@@ -42,15 +42,13 @@ use Twig\Environment;
 class EventRegistrationExportController
 {
     private $twig;
-    private $framework;
     private $session;
     private $exporter;
     private $translator;
 
-    public function __construct(Environment $twig, ContaoFramework $framework, SessionInterface $session, EventRegistrationExport $exporter, TranslatorInterface $translator)
+    public function __construct(Environment $twig, SessionInterface $session, EventRegistrationExport $exporter, TranslatorInterface $translator)
     {
         $this->twig = $twig;
-        $this->framework = $framework;
         $this->session = $session;
         $this->exporter = $exporter;
         $this->translator = $translator;
