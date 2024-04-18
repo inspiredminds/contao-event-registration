@@ -45,8 +45,12 @@ class ConfigOnShowCallbackListener
             if (null !== $form && null !== ($formField = FormFieldModel::findBy(["$t.pid = ?", "$t.name = ?"], [$form->id, $name])) && !empty($formField->label)) {
                 $label = $formField->label.' <small>'.$name.'</small>';
             }
-
-            $show['tl_event_registration'][0][$label] = $value;
+            
+            if (is_array($value)) {
+                $show['tl_event_registration'][0][$label] = implode("\n", $value);
+            } else {
+                $show['tl_event_registration'][0][$label] = $value;
+            }
         }
 
         return $show;
