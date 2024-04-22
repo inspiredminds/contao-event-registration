@@ -46,7 +46,7 @@ class ConfigOnShowCallbackListener
                 $label = $formField->label.' <small>'.$name.'</small>';
             }
             
-            if (is_array($value)) {
+            if (\is_array($value)) {
                 $show['tl_event_registration'][0][$label] = implode("\n", $value);
             } else {
                 $show['tl_event_registration'][0][$label] = $value;
