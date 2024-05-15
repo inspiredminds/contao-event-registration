@@ -7,5 +7,5 @@ services:
             $bundles: '%kernel.bundles%'
     
     InspiredMinds\ContaoEventRegistration\:
-        resource: ../../
-        exclude: ../../{Model,DependencyInjection,Resources}
+        resource: ../src/
+        exclude: ../src/{Config,DependencyInjection,Exception,Model}
