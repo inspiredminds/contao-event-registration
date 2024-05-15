@@ -1,13 +1,7 @@
 {% trans_default_domain 'contao_default' %}
-{% extends "@ContaoCore/Backend/be_page.html.twig" %}
+{% extends '@Contao/be_main' %}
 
-{% block headline %}
-    {{ 'event_registration_export'|trans({event: eventTitle}, 'im_contao_event_registration') }}
-{% endblock %}
-
-{% block error %}{% endblock %}
-
-{% block main %}
+{% block main_content %}
     <div id="tl_buttons">
         <a href="{{ backUrl }}" class="header_back" title="{{ 'MSC.backBTTitle'|trans }}" accesskey="b">{{ 'MSC.backBT'|trans }}</a>
     </div>

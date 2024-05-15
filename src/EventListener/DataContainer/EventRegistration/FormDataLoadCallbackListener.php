@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of the Contao Event Registration extension.
  *
- * (c) inspiredminds
+ * (c) INSPIRED MINDS
  *
  * @license LGPL-3.0-or-later
  */
@@ -19,8 +19,16 @@ use Contao\CoreBundle\ServiceAnnotation\Callback;
  */
 class FormDataLoadCallbackListener
 {
-    public function __invoke($value): string
+    public function __invoke($value): string|null
     {
-        return json_encode(json_decode($value ?? '') ?: [], \JSON_PRETTY_PRINT);
+        if (!$value) {
+            return null;
+        }
+
+        try {
+            return json_encode(json_decode((string) $value, null, 512, JSON_THROW_ON_ERROR) ?: [], JSON_PRETTY_PRINT);
+        } catch (\JsonException) {
+            return null;
+        }
     }
 }

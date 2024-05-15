@@ -5,41 +5,46 @@ declare(strict_types=1);
 /*
  * This file is part of the Contao Event Registration extension.
  *
- * (c) inspiredminds
+ * (c) INSPIRED MINDS
  *
  * @license LGPL-3.0-or-later
  */
 
 namespace InspiredMinds\ContaoEventRegistration\EventListener\NotificationCenter;
 
-use Contao\CoreBundle\ServiceAnnotation\Hook;
 use Contao\FormModel;
 use InspiredMinds\ContaoEventRegistration\EventRegistration;
 use InspiredMinds\ContaoEventRegistration\Model\EventRegistrationModel;
-use NotificationCenter\Model\Gateway;
-use NotificationCenter\Model\Message;
-use NotificationCenter\Model\Notification;
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+use Terminal42\NotificationCenterBundle\Config\MessageConfig;
+use Terminal42\NotificationCenterBundle\Event\CreateParcelEvent;
+use Terminal42\NotificationCenterBundle\Parcel\Stamp\TokenCollectionStamp;
+use Terminal42\NotificationCenterBundle\Token\Definition\Factory\TokenDefinitionFactoryInterface;
+use Terminal42\NotificationCenterBundle\Token\Token;
 
-/**
- * @Hook("sendNotificationMessage")
- */
+#[AsEventListener]
 class AddEventDataListener
 {
-    private $eventRegistration;
-
-    public function __construct(EventRegistration $eventRegistration)
-    {
-        $this->eventRegistration = $eventRegistration;
+    public function __construct(
+        private readonly EventRegistration $eventRegistration,
+        private readonly TokenDefinitionFactoryInterface $factory,
+    ) {
     }
 
-    public function __invoke(Message $message, array &$tokens, string $language, Gateway $gateway): bool
+    public function __invoke(CreateParcelEvent $createParcelEvent): void
     {
-        // Get the current event, if applicable.
-        $event = $this->eventRegistration->getCurrentEvent();
+        $parcel = $createParcelEvent->getParcel();
+        $messageConfig = $parcel->getMessageConfig();
 
-        if (null === $event || !$this->isEventRegistrationFormNotification($message)) {
-            return true;
+        // Get the current event, if applicable.
+        $calendarEvent = $this->eventRegistration->getCurrentEvent();
+
+        if (!$calendarEvent || !$this->isEventRegistrationFormNotification($messageConfig)) {
+            return;
         }
+
+        $tokenCollection = $parcel->getStamp(TokenCollectionStamp::class)->tokenCollection;
+        $tokens = $tokenCollection->forSimpleTokenParser();
 
         if (empty($tokens['form_event_registration_uuid'])) {
             throw new \RuntimeException('No event registration ID present. Was EventRegistrationFormListener executed before?');
@@ -51,20 +56,16 @@ class AddEventDataListener
             throw new \RuntimeException('Invalid registration UUID given.');
         }
 
-        $tokens = array_merge($tokens, $this->eventRegistration->getSimpleTokens($event, $registration));
+        $eventRegistrationTokens = $this->eventRegistration->getSimpleTokens($calendarEvent, $registration);
 
-        return true;
+        foreach ($eventRegistrationTokens as $name => $value) {
+            $tokenCollection->addToken(new Token($name, $value, (string) $value));
+        }
     }
 
-    private function isEventRegistrationFormNotification(Message $message): bool
+    private function isEventRegistrationFormNotification(MessageConfig $messageConfig): bool
     {
-        /** @var Notification $notification */
-        $notification = $message->getRelated('pid');
-
-        // Get forms that use this notification
-        $forms = FormModel::findBy(['nc_notification = ?'], [$notification->id]);
-
-        if (null === $forms) {
+        if (!$forms = FormModel::findBy(['nc_notification = ?'], [$messageConfig->getNotification()])) {
             return false;
         }
 

@@ -5,7 +5,11 @@ services:
         bind:
             $nodeManager: '@terminal42_node.manager'
             $bundles: '%kernel.bundles%'
+            $formGeneratorNotificationType: '@Terminal42\NotificationCenterBundle\NotificationType\FormGeneratorNotificationType'
     
     InspiredMinds\ContaoEventRegistration\:
         resource: ../src/
-        exclude: ../src/{Config,DependencyInjection,Exception,Model}
+        exclude: ../src/{Config,ContaoManager,DependencyInjection,Exception,Model}
+
+    InspiredMinds\ContaoEventRegistration\NotificationType\FormGeneratorNotificationType:
+        decorates: Terminal42\NotificationCenterBundle\NotificationType\FormGeneratorNotificationType

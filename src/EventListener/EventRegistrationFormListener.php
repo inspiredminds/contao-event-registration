@@ -29,16 +29,13 @@ use Symfony\Component\Security\Core\Security;
  */
 class EventRegistrationFormListener
 {
-    private $eventRegistration;
-    private $security;
-
-    public function __construct(EventRegistration $eventRegistration, Security $security)
-    {
-        $this->eventRegistration = $eventRegistration;
-        $this->security = $security;
+    public function __construct(
+        private readonly EventRegistration $eventRegistration,
+        private readonly Security $security,
+    ) {
     }
 
-    public function __invoke(array &$submittedData, array $formData, ?array $files, array $labels, Form $form): void
+    public function __invoke(array &$submittedData, array $formData, array|null $files, array $labels, Form $form): void
     {
         if (!$this->eventRegistration->isEventRegistrationForm($form)) {
             return;
@@ -46,7 +43,7 @@ class EventRegistrationFormListener
 
         $event = $this->getEvent(true);
 
-        if (null === $event || !$this->eventRegistration->canRegister($event)) {
+        if (!$event || !$this->eventRegistration->canRegister($event)) {
             return;
         }
 
@@ -59,8 +56,8 @@ class EventRegistrationFormListener
         $registration->uuid = Uuid::uuid4()->toString();
         $registration->form = (int) $form->id;
         $registration->member = $member ? (int) $member->id : 0;
-        $registration->amount = (int) $submittedData['amount'] ?: 1;
-        $registration->form_data = json_encode($submittedData);
+        $registration->amount = max(1, (int) ($submittedData['amount'] ?? 1));
+        $registration->form_data = json_encode($submittedData, JSON_THROW_ON_ERROR);
 
         $registration->save();
 
@@ -71,11 +68,11 @@ class EventRegistrationFormListener
     /**
      * Returns the current event, if applicable.
      */
-    private function getEvent(bool $returnMainEvent = true): ?CalendarEventsModel
+    private function getEvent(bool $returnMainEvent = true): CalendarEventsModel|null
     {
         $event = $this->eventRegistration->getCurrentEvent();
 
-        if (null === $event) {
+        if (!$event) {
             return null;
         }
 
@@ -90,7 +87,7 @@ class EventRegistrationFormListener
     /**
      * Returns the current frontend user.
      */
-    private function getMember(): ?FrontendUser
+    private function getMember(): FrontendUser|null
     {
         $user = $this->security->getUser();
 

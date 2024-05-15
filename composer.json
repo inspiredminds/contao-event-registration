@@ -41,7 +41,6 @@
         "symfony/translation": "^5.4 || ^6.4",
         "terminal42/contao-node": "^1.3",
         "terminal42/notification_center": "^2.0",
-        "terminal42/service-annotation-bundle": "^1.1",
         "symfony/polyfill-php80": "^1.28"
     },
     "autoload": {
@@ -61,7 +60,8 @@
             "contao-components/installer": true,
             "contao-community-alliance/composer-plugin": true,
             "contao/manager-plugin": true,
-            "php-http/discovery": false
+            "php-http/discovery": false,
+            "dealerdirect/phpcodesniffer-composer-installer": true
         }
     }
 }

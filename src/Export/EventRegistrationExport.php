@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of the Contao Event Registration extension.
  *
- * (c) inspiredminds
+ * (c) INSPIRED MINDS
  *
  * @license LGPL-3.0-or-later
  */
@@ -20,19 +20,17 @@ use Doctrine\DBAL\Connection;
 use InspiredMinds\ContaoEventRegistration\Config\ExportConfig;
 use InspiredMinds\ContaoEventRegistration\Exception\ExportException;
 use InspiredMinds\ContaoEventRegistration\Model\EventRegistrationModel;
+use League\Csv\Writer;
 
 class EventRegistrationExport
 {
-    private $framework;
-    private $db;
-
-    public function __construct(ContaoFramework $framework, Connection $db)
-    {
-        $this->framework = $framework;
-        $this->db = $db;
+    public function __construct(
+        private readonly ContaoFramework $framework,
+        private readonly Connection $db,
+    ) {
     }
 
-    public function getCsv(ExportConfig $config): \League\Csv\Writer
+    public function getCsv(ExportConfig $config): Writer
     {
         $this->framework->initialize();
 
@@ -42,11 +40,11 @@ class EventRegistrationExport
             throw new ExportException('There are no records to export.');
         }
 
-        $csv = \League\Csv\Writer::createFromFileObject(new \SplTempFileObject(32 * 1024 * 1024));
+        $csv = Writer::createFromFileObject(new \SplTempFileObject(32 * 1024 * 1024));
         $csv->setDelimiter($config->delimiter ?: ',');
 
         if ($config->excelCompatible) {
-            $csv->setOutputBOM(\League\Csv\Writer::BOM_UTF8);
+            $csv->setOutputBOM(Writer::BOM_UTF8);
         }
 
         $table = EventRegistrationModel::getTable();
@@ -68,7 +66,7 @@ class EventRegistrationExport
 
                 // Retrieve the label for the related record
                 if (isset($config['foreignKey'])) {
-                    [$foreignTable, $foreignLabelField] = explode('.', $config['foreignKey'], 2);
+                    [$foreignTable, $foreignLabelField] = explode('.', (string) $config['foreignKey'], 2);
 
                     $foreignLabel = $this->db->executeQuery('SELECT '.$foreignLabelField.' FROM '.$foreignTable.' WHERE id = ?', [$value])->fetchOne();
 
@@ -107,13 +105,17 @@ class EventRegistrationExport
 
         // Go through all form_data entries and add them as the header
         foreach ($records as $record) {
-            foreach (json_decode($record->form_data ?? '', true) ?: [] as $key => $value) {
-                $formDataHeaders[$key] = $key;
+            try {
+                foreach (array_keys(json_decode($record->form_data ?? '', true, 512, JSON_THROW_ON_ERROR)) as $key) {
+                    $formDataHeaders[$key] = $key;
+                }
+            } catch (\JsonException) {
+                // noop
             }
         }
 
         $formDataHeaders = array_diff(array_keys($formDataHeaders), $header);
 
-        return array_unique(array_merge($header, $formDataHeaders));
+        return array_unique([...$header, ...$formDataHeaders]);
     }
 }
