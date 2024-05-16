@@ -20,6 +20,7 @@ use InspiredMinds\ContaoEventRegistration\EventRegistration;
 use InspiredMinds\ContaoEventRegistration\Model\EventRegistrationModel;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Creates a new event registration record.
@@ -32,10 +33,11 @@ class EventRegistrationFormListener
     public function __construct(
         private readonly EventRegistration $eventRegistration,
         private readonly Security $security,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
-    public function __invoke(array &$submittedData, array $formData, array|null $files, array $labels, Form $form): void
+    public function __invoke(array &$submittedData, array $formData, array|null $files, array &$labels, Form $form): void
     {
         if (!$this->eventRegistration->isEventRegistrationForm($form)) {
             return;
@@ -62,7 +64,9 @@ class EventRegistrationFormListener
         $registration->save();
 
         // Inject event registration UUID
+        $t = EventRegistrationModel::getTable();
         $submittedData['event_registration_uuid'] = $registration->uuid;
+        $labels['event_registration_uuid'] = $this->translator->trans($t.'.uuid.0', [], 'contao_'.$t);
     }
 
     /**

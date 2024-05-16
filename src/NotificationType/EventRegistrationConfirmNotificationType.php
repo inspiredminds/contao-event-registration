@@ -17,10 +17,6 @@ use Terminal42\NotificationCenterBundle\NotificationType\NotificationTypeInterfa
 
 class EventRegistrationConfirmNotificationType implements NotificationTypeInterface
 {
-    public function __construct(private readonly NotificationTypeInterface $formGeneratorNotificationType)
-    {
-    }
-
     public function getName(): string
     {
         return NotificationTypes::CONFIRM;
@@ -28,6 +24,7 @@ class EventRegistrationConfirmNotificationType implements NotificationTypeInterf
 
     public function getTokenDefinitions(): array
     {
-        return $this->formGeneratorNotificationType->getTokenDefinitions();
+        // Will be added by \InspiredMinds\ContaoEventRegistration\EventListener\EventRegistrationTokensListener
+        return [];
     }
 }
