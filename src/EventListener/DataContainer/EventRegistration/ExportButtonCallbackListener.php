@@ -23,16 +23,13 @@ use Symfony\Component\Routing\RouterInterface;
  */
 class ExportButtonCallbackListener
 {
-    private $requestStack;
-    private $router;
-
-    public function __construct(RequestStack $requestStack, RouterInterface $router)
-    {
-        $this->requestStack = $requestStack;
-        $this->router = $router;
+    public function __construct(
+        private readonly RequestStack $requestStack,
+        private readonly RouterInterface $router,
+    ) {
     }
 
-    public function __invoke(?string $href, string $label, string $title, string $class, string $attributes): string
+    public function __invoke(string|null $href, string $label, string $title, string $class, string $attributes): string
     {
         $request = $this->requestStack->getCurrentRequest();
 

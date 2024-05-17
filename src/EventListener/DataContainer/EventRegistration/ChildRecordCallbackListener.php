@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of the Contao Event Registration extension.
  *
- * (c) inspiredminds
+ * (c) INSPIRED MINDS
  *
  * @license LGPL-3.0-or-later
  */
@@ -22,11 +22,8 @@ use InspiredMinds\ContaoEventRegistration\EventRegistration\LabelBuilder;
  */
 class ChildRecordCallbackListener
 {
-    private $labelBuilder;
-
-    public function __construct(LabelBuilder $labelBuilder)
+    public function __construct(private readonly LabelBuilder $labelBuilder)
     {
-        $this->labelBuilder = $labelBuilder;
     }
 
     public function __invoke(array $row): string
@@ -34,8 +31,13 @@ class ChildRecordCallbackListener
         $label = ($this->labelBuilder)($row);
 
         // Show all form data values as a fallback
-        if (empty($label)) {
-            $formData = json_decode($row['form_data'] ?? '', true) ?: [];
+        if (null === $label || '' === $label || '0' === $label) {
+            try {
+                $formData = json_decode($row['form_data'] ?? '', true, 512, JSON_THROW_ON_ERROR);
+            } catch (\JsonException) {
+                $formData = [];
+            }
+
             $label = StringUtil::substr(implode(', ', array_filter($formData)), 128);
         }
 

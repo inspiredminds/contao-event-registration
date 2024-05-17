@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of the Contao Event Registration extension.
  *
- * (c) inspiredminds
+ * (c) INSPIRED MINDS
  *
  * @license LGPL-3.0-or-later
  */
@@ -25,13 +25,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class HeaderCallbackListener
 {
-    private $helper;
-    private $trans;
-
-    public function __construct(EventRegistration $helper, TranslatorInterface $trans)
-    {
-        $this->helper = $helper;
-        $this->trans = $trans;
+    public function __construct(
+        private readonly EventRegistration $helper,
+        private readonly TranslatorInterface $trans,
+    ) {
     }
 
     public function __invoke(array $labels, DataContainer $dc): array

@@ -22,35 +22,31 @@ use Contao\StringUtil;
 use Contao\Template;
 use InspiredMinds\ContaoEventRegistration\EventRegistration;
 use InspiredMinds\ContaoEventRegistration\Model\EventRegistrationModel;
-use NotificationCenter\Model\Notification;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Terminal42\NodeBundle\NodeManager;
+use Terminal42\NotificationCenterBundle\NotificationCenter;
 
 /**
- * @FrontendModule(type=EventRegistrationConfirmController::TYPE, category="events")
+ * @FrontendModule(type=EventRegistrationConfirmController::TYPE, category="events", template="mod_event_registration_confirm")
  */
 class EventRegistrationConfirmController extends AbstractFrontendModuleController
 {
     public const TYPE = 'event_registration_confirm';
+
     public const ACTION = 'confirm';
 
-    private $eventRegistration;
-    private $nodeManager;
-    private $translator;
-
-    private $simpleTokenParser;
-
-    public function __construct(EventRegistration $eventRegistration, NodeManager $nodeManager, TranslatorInterface $translator, SimpleTokenParser $simpleTokenParser)
-    {
-        $this->eventRegistration = $eventRegistration;
-        $this->nodeManager = $nodeManager;
-        $this->translator = $translator;
-        $this->simpleTokenParser = $simpleTokenParser;
+    public function __construct(
+        private readonly EventRegistration $eventRegistration,
+        private readonly NodeManager $nodeManager,
+        private readonly TranslatorInterface $translator,
+        private readonly SimpleTokenParser $simpleTokenParser,
+        private readonly NotificationCenter $notificationCenter,
+    ) {
     }
 
-    protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
+    protected function getResponse(Template $template, ModuleModel $model, Request $request): Response
     {
         $uuid = $request->query->get('uuid');
         $action = $request->query->get('action');
@@ -70,22 +66,21 @@ class EventRegistrationConfirmController extends AbstractFrontendModuleControlle
         }
 
         $event = CalendarEventsModel::findById((int) $registration->pid);
+        $tokens = $this->eventRegistration->getSimpleTokens($event, $registration);
 
         $template->event = $event;
         $template->registration = $registration;
-        $template->content = function () use ($model): ?string {
+        $template->content = function () use ($model, $tokens): string|null {
             if ($nodes = StringUtil::deserialize($model->nodes, true)) {
-                return implode('', $this->nodeManager->generateMultiple($nodes));
+                return $this->simpleTokenParser->parse(implode('', $this->nodeManager->generateMultiple($nodes)), $tokens);
             }
 
             return null;
         };
 
-        $tokens = $this->eventRegistration->getSimpleTokens($event, $registration);
-
         $this->processConfirm($template, $model, $event, $registration, $tokens);
 
-        return new Response($this->simpleTokenParser->parse($template->parse(), $tokens));
+        return $template->getResponse();
     }
 
     private function processConfirm(Template $template, ModuleModel $model, CalendarEventsModel $event, EventRegistrationModel $registration, array $tokens): void
@@ -121,8 +116,8 @@ class EventRegistrationConfirmController extends AbstractFrontendModuleControlle
         $registration->save();
 
         // Send notification
-        if (!empty($model->nc_notification) && null !== ($notification = Notification::findByPk((int) $model->nc_notification))) {
-            $notification->send($tokens);
+        if ($model->nc_notification) {
+            $this->notificationCenter->sendNotification($model->nc_notification, $tokens);
         }
     }
 }

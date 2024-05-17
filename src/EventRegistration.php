@@ -37,13 +37,10 @@ class EventRegistration
         'endDate',
     ];
 
-    private $db;
-    private $bundles;
-
-    public function __construct(Connection $db, array $bundles)
-    {
-        $this->db = $db;
-        $this->bundles = $bundles;
+    public function __construct(
+        private readonly Connection $db,
+        private array $bundles,
+    ) {
     }
 
     /**
@@ -51,21 +48,13 @@ class EventRegistration
      */
     public function addTemplateData(Template $template, CalendarEventsModel $event): void
     {
-        $template->canRegister = function () use ($event): bool {
-            return $this->canRegister($event);
-        };
+        $template->canRegister = fn (): bool => $this->canRegister($event);
 
-        $template->registrationForm = function () use ($event): string {
-            return $this->getRegistrationForm($event);
-        };
+        $template->registrationForm = fn (): string => $this->getRegistrationForm($event);
 
-        $template->isFull = function () use ($event): bool {
-            return $this->isFull($event);
-        };
+        $template->isFull = fn (): bool => $this->isFull($event);
 
-        $template->registrationCount = function () use ($event): int {
-            return $this->getRegistrationCount($event);
-        };
+        $template->registrationCount = fn (): int => $this->getRegistrationCount($event);
 
         $mainEvent = $this->getMainEvent($event);
 
@@ -145,7 +134,7 @@ class EventRegistration
     /**
      * Returns the current event based on the auto_item.
      */
-    public function getCurrentEvent(): ?CalendarEventsModel
+    public function getCurrentEvent(): CalendarEventsModel|null
     {
         $item = Input::get('auto_item');
 
@@ -159,7 +148,7 @@ class EventRegistration
     /**
      * Creates a simple token array with the given even data and optionally event registration data.
      */
-    public function getSimpleTokens(CalendarEventsModel $event, EventRegistrationModel $registration = null): array
+    public function getSimpleTokens(CalendarEventsModel $event, EventRegistrationModel|null $registration = null): array
     {
         $tokens = [];
 
@@ -176,7 +165,7 @@ class EventRegistration
             $tokens['event_'.$name] = $value;
         }
 
-        if (null !== $registration) {
+        if ($registration) {
             Controller::loadDataContainer('tl_event_registration');
             $dcaFields = &$GLOBALS['TL_DCA']['tl_event_registration']['fields'];
             $data = $registration->getCombinedRow();
@@ -217,7 +206,7 @@ class EventRegistration
             return $event;
         }
 
-        $calendar = CalendarModel::findByPk((int) $event->pid);
+        $calendar = CalendarModel::findById((int) $event->pid);
 
         // If the calendar is not configured properly, no main event exists
         if (null === $calendar || empty($calendar->master)) {
@@ -254,14 +243,14 @@ class EventRegistration
         switch ($action) {
             case EventRegistrationConfirmController::ACTION:
                 if ($calendar->reg_confirm_page) {
-                    $page = PageModel::findByPk($calendar->reg_confirm_page);
+                    $page = PageModel::findById($calendar->reg_confirm_page);
                 }
 
                 break;
 
             case EventRegistrationCancelController::ACTION:
                 if ($calendar->reg_cancel_page) {
-                    $page = PageModel::findByPk($calendar->reg_cancel_page);
+                    $page = PageModel::findById($calendar->reg_cancel_page);
                 }
 
                 break;

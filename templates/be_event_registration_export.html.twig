@@ -1,0 +1,12 @@
+{% trans_default_domain 'contao_default' %}
+{% extends '@Contao/be_main' %}
+
+{% block main_content %}
+    <div id="tl_buttons">
+        <a href="{{ backUrl }}" class="header_back" title="{{ 'MSC.backBTTitle'|trans }}" accesskey="b">{{ 'MSC.backBT'|trans }}</a>
+    </div>
+
+    {{ messages|raw }}
+
+    {{ form|raw }}
+{% endblock %}

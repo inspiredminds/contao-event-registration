@@ -21,6 +21,7 @@ use InspiredMinds\ContaoEventRegistration\ContaoEventRegistrationBundle;
 use Symfony\Component\Config\Loader\LoaderResolverInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\RouteCollection;
+use Terminal42\NotificationCenterBundle\Terminal42NotificationCenterBundle;
 
 class Plugin implements BundlePluginInterface, RoutingPluginInterface
 {
@@ -30,16 +31,16 @@ class Plugin implements BundlePluginInterface, RoutingPluginInterface
             BundleConfig::create(ContaoEventRegistrationBundle::class)
                 ->setLoadAfter([
                     ContaoCalendarBundle::class,
-                    'notification_center',
+                    Terminal42NotificationCenterBundle::class,
                 ]),
         ];
     }
 
-    public function getRouteCollection(LoaderResolverInterface $resolver, KernelInterface $kernel): ?RouteCollection
+    public function getRouteCollection(LoaderResolverInterface $resolver, KernelInterface $kernel): RouteCollection|null
     {
         return $resolver
-            ->resolve(__DIR__.'/../Resources/config/routes.yaml')
-            ->load(__DIR__.'/../Resources/config/routes.yaml')
+            ->resolve(__DIR__.'/../../config/routes.yaml')
+            ->load(__DIR__.'/../../config/routes.yaml')
         ;
     }
 }

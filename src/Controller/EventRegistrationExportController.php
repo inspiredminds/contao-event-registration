@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of the Contao Event Registration extension.
  *
- * (c) inspiredminds
+ * (c) INSPIRED MINDS
  *
  * @license LGPL-3.0-or-later
  */
@@ -14,6 +14,7 @@ namespace InspiredMinds\ContaoEventRegistration\Controller;
 
 use Codefog\HasteBundle\CodefogHasteBundle;
 use Contao\CalendarEventsModel;
+use Contao\CoreBundle\Controller\AbstractBackendController;
 use Contao\CoreBundle\Exception\PageNotFoundException;
 use Contao\Message;
 use Contao\System;
@@ -24,34 +25,25 @@ use InspiredMinds\ContaoEventRegistration\Export\EventRegistrationExport;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Terminal42\ServiceAnnotationBundle\Annotation\ServiceTag;
 use Twig\Environment;
 
-/**
- * @Route("/contao/eventregistration/export/{eventId}",
- *   name=EventRegistrationExportController::class,
- *   defaults={"_scope": "backend"},
- *   requirements={"eventId": "\d+"}
- * )
- *
- * @ServiceTag("controller.service_arguments")
- */
-class EventRegistrationExportController
+#[AsController]
+#[Route(
+    path: '/contao/eventregistration/export/{eventId}',
+    name: self::class,
+    defaults: ['_scope' => 'backend'],
+)]
+class EventRegistrationExportController extends AbstractBackendController implements ServiceSubscriberInterface
 {
-    private $twig;
-    private $session;
-    private $exporter;
-    private $translator;
-
-    public function __construct(Environment $twig, SessionInterface $session, EventRegistrationExport $exporter, TranslatorInterface $translator)
-    {
-        $this->twig = $twig;
-        $this->session = $session;
-        $this->exporter = $exporter;
-        $this->translator = $translator;
+    public function __construct(
+        private readonly Environment $twig,
+        private readonly EventRegistrationExport $exporter,
+        private readonly TranslatorInterface $translator,
+    ) {
     }
 
     public function __invoke(Request $request, int $eventId): Response
@@ -63,7 +55,7 @@ class EventRegistrationExportController
         }
 
         /** @var AttributeBagInterface $backendSession */
-        $backendSession = $this->session->getBag('contao_backend');
+        $backendSession = $request->getSession()->getBag('contao_backend');
 
         // Get the form
         $form = $this->buildForm($request, $backendSession);
@@ -81,30 +73,32 @@ class EventRegistrationExportController
             try {
                 $csv = $this->exporter->getCsv($config);
 
-                return new Response($csv->getContent(), 200, [
-                    'Content-Encoding' => 'none',
-                    'Content-Type' => 'text/csv; charset=UTF-8',
-                    'Content-Disposition' => 'attachment; filename="'.$event->alias.'.csv"',
-                    'Content-Description' => 'File Transfer',
-                ]);
+                return new Response(
+                    $csv->toString(),
+                    200,
+                    [
+                        'Content-Encoding' => 'none',
+                        'Content-Type' => 'text/csv; charset=UTF-8',
+                        'Content-Disposition' => 'attachment; filename="'.$event->alias.'.csv"',
+                        'Content-Description' => 'File Transfer',
+                    ],
+                );
             } catch (ExportException $e) {
                 Message::addError($e->getMessage(), 'BE');
             }
         }
 
-        return new Response($this->twig->render('@ContaoEventRegistration/be_event_registration_export.html.twig', [
+        return $this->render('@ContaoEventRegistration/be_event_registration_export.html.twig', [
+            'headline' => $this->translator->trans('event_registration_export', ['event' => $event->title], 'im_contao_event_registration'),
             'backUrl' => System::getReferer(),
             'form' => $form->generate(),
             'messages' => Message::generate(),
-            'eventTitle' => $event->title,
-        ]));
+        ]);
     }
 
     private function buildForm(Request $request, AttributeBagInterface $backendSession): BackendForm
     {
-        $form = new BackendForm('exportConfig', Request::METHOD_POST, function ($form) use ($request) {
-            return $request->request->get('FORM_SUBMIT') === $form->getFormId();
-        });
+        $form = new BackendForm('exportConfig', Request::METHOD_POST, static fn ($form) => $request->request->get('FORM_SUBMIT') === $form->getFormId());
 
         $form->setLegend($this->translator->trans('export', [], 'im_contao_event_registration'));
 

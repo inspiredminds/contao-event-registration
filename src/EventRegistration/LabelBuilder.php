@@ -21,17 +21,14 @@ use InspiredMinds\ContaoEventRegistration\Model\EventRegistrationModel;
  */
 class LabelBuilder
 {
-    private $framework;
-
-    public function __construct(ContaoFramework $framework)
+    public function __construct(private readonly ContaoFramework $framework)
     {
-        $this->framework = $framework;
     }
 
     /**
      * @param EventRegistrationModel|array $row
      */
-    public function __invoke($row): ?string
+    public function __invoke($row): string|null
     {
         $this->framework->initialize();
 
@@ -49,7 +46,12 @@ class LabelBuilder
         // Build label according to DCA config
         if (null !== $list && !empty($list['fields']) && !empty($list['format'])) {
             $fieldData = [];
-            $formData = json_decode($row['form_data'] ?? '', true) ?: [];
+
+            try {
+                $formData = json_decode($row['form_data'] ?? '', true, 512, JSON_THROW_ON_ERROR);
+            } catch (\JsonException) {
+                $formData = [];
+            }
 
             foreach ($list['fields'] as $labelField) {
                 if (isset($row[$labelField])) {
@@ -69,7 +71,7 @@ class LabelBuilder
                 if (false === $label) {
                     $label = null;
                 }
-            } catch (\ValueError $e) {
+            } catch (\ValueError) {
                 // Ignore value errors
             }
         }

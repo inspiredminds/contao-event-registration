@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of the Contao Event Registration extension.
  *
- * (c) inspiredminds
+ * (c) INSPIRED MINDS
  *
  * @license LGPL-3.0-or-later
  */
@@ -22,13 +22,10 @@ use Symfony\Component\Security\Core\Security;
  */
 class RegistrationFormOptionsCallbackListener
 {
-    private $db;
-    private $security;
-
-    public function __construct(Connection $db, Security $security)
-    {
-        $this->db = $db;
-        $this->security = $security;
+    public function __construct(
+        private readonly Connection $db,
+        private readonly Security $security,
+    ) {
     }
 
     public function __invoke(): array
@@ -39,9 +36,7 @@ class RegistrationFormOptionsCallbackListener
             return [];
         }
 
-        $forms = $this->db->executeQuery('SELECT id, title FROM tl_form ORDER BY title')->fetchAll();
-
-        if (false === $forms) {
+        if (!$forms = $this->db->executeQuery('SELECT id, title FROM tl_form ORDER BY title')->fetchAllAssociative()) {
             return [];
         }
 

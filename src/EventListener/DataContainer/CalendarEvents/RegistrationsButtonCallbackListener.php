@@ -28,14 +28,11 @@ use InspiredMinds\ContaoEventRegistration\Model\EventRegistrationModel;
  */
 class RegistrationsButtonCallbackListener
 {
-    private $eventRegistration;
-
-    public function __construct(EventRegistration $eventRegistration)
+    public function __construct(private readonly EventRegistration $eventRegistration)
     {
-        $this->eventRegistration = $eventRegistration;
     }
 
-    public function __invoke(array $row, ?string $href, string $label, string $title, ?string $icon, string $attributes): string
+    public function __invoke(array $row, string|null $href, string $label, string $title, string|null $icon, string $attributes): string
     {
         $mainEvent = $this->eventRegistration->getMainEvent(CalendarEventsModel::findById($row['id']));
 

@@ -1,0 +1,18 @@
+parameters:
+    contao_event_registration.tokens.supported_notifications:
+        - !php/const Terminal42\NotificationCenterBundle\NotificationType\FormGeneratorNotificationType::NAME
+        - !php/const InspiredMinds\ContaoEventRegistration\NotificationTypes::CONFIRM
+        - !php/const InspiredMinds\ContaoEventRegistration\NotificationTypes::CANCEL
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        bind:
+            $nodeManager: '@terminal42_node.manager'
+            $bundles: '%kernel.bundles%'
+            $supportedNotificationTypes: '%contao_event_registration.tokens.supported_notifications%'
+    
+    InspiredMinds\ContaoEventRegistration\:
+        resource: ../src/
+        exclude: ../src/{Config,ContaoManager,DependencyInjection,Exception,Model}

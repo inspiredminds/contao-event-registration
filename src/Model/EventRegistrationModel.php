@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of the Contao Event Registration extension.
  *
- * (c) inspiredminds
+ * (c) INSPIRED MINDS
  *
  * @license LGPL-3.0-or-later
  */
@@ -56,7 +56,7 @@ class EventRegistrationModel extends Model
 
         $formData = $this->decodedFormData;
 
-        foreach ($row as $key => $value) {
+        foreach (array_keys($row) as $key) {
             unset($formData[$key]);
         }
 
@@ -70,7 +70,11 @@ class EventRegistrationModel extends Model
     private function decodeFormData(): void
     {
         if (null === $this->decodedFormData) {
-            $this->decodedFormData = json_decode($this->form_data ?? '', true) ?: [];
+            try {
+                $this->decodedFormData = json_decode($this->form_data ?? '', true, 512, JSON_THROW_ON_ERROR);
+            } catch (\JsonException) {
+                $this->decodedFormData = [];
+            }
         }
     }
 }

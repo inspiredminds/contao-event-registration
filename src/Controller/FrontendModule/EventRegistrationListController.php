@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of the Contao Event Registration extension.
  *
- * (c) inspiredminds
+ * (c) INSPIRED MINDS
  *
  * @license LGPL-3.0-or-later
  */
@@ -25,28 +25,24 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Lists all (confirmed) registrations of an event.
  *
- * @FrontendModule(type=EventRegistrationListController::TYPE, category="events")
+ * @FrontendModule(type=EventRegistrationListController::TYPE, category="events", template="mod_event_registration_list")
  */
 class EventRegistrationListController extends AbstractFrontendModuleController
 {
     public const TYPE = 'event_registration_list';
 
-    private $eventRegistration;
-    private $labelBuilder;
-    private $db;
-
-    public function __construct(EventRegistration $eventRegistration, LabelBuilder $labelBuilder, Connection $db)
-    {
-        $this->eventRegistration = $eventRegistration;
-        $this->labelBuilder = $labelBuilder;
-        $this->db = $db;
+    public function __construct(
+        private readonly EventRegistration $eventRegistration,
+        private readonly LabelBuilder $labelBuilder,
+        private readonly Connection $db,
+    ) {
     }
 
-    protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
+    protected function getResponse(Template $template, ModuleModel $model, Request $request): Response
     {
         $event = $this->eventRegistration->getCurrentEvent();
 
-        if (null === $event || !$event->reg_enable) {
+        if (!$event || !$event->reg_enable) {
             return new Response();
         }
 
@@ -59,7 +55,7 @@ class EventRegistrationListController extends AbstractFrontendModuleController
 
         $registrations = $this->db->fetchAllAssociative($query, [(int) $mainEvent->id]);
 
-        if (empty($registrations)) {
+        if ([] === $registrations) {
             return new Response();
         }
 
@@ -68,7 +64,12 @@ class EventRegistrationListController extends AbstractFrontendModuleController
                 $registration['label'] = ($this->labelBuilder)($registration);
             }
 
-            $registration['form_data'] = json_decode($registration['form_data']);
+            try {
+                $registration['form_data'] = json_decode((string) $registration['form_data'], null, 512, JSON_THROW_ON_ERROR);
+            } catch (\JsonException) {
+                // noop
+            }
+
             $registration = (object) $registration;
         }
 
