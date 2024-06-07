@@ -74,9 +74,7 @@ class EventRegistrationFormListener
      */
     private function getEvent(bool $returnMainEvent = true): CalendarEventsModel|null
     {
-        $event = $this->eventRegistration->getCurrentEvent();
-
-        if (!$event) {
+        if (!$event = $this->eventRegistration->getCurrentEvent()) {
             return null;
         }
 
