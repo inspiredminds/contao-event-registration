@@ -49,6 +49,7 @@ class ConfigOnLoadCallbackListener
             ->removeField('reg_regEnd')
             ->removeField('reg_cancelEnd')
             ->removeField('reg_requireConfirm')
+            ->removeField('reg_enableWaitingList')
             ->applyToSubPalette('reg_enable', 'tl_calendar_events')
         ;
     }

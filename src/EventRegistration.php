@@ -56,6 +56,8 @@ class EventRegistration
 
         $template->registrationCount = fn (): int => $this->getRegistrationCount($event);
 
+        $template->isWaitingList = fn (): bool => $this->isWaitingList($event);
+
         $mainEvent = $this->getMainEvent($event);
 
         $template->reg_min = $mainEvent->reg_min;
@@ -80,7 +82,12 @@ class EventRegistration
             return false;
         }
 
-        return !$this->isFull($event);
+        return $this->isWaitingList($event) || !$this->isFull($event);
+    }
+
+    public function isWaitingList(CalendarEventsModel $event): bool
+    {
+        return $this->getMainEvent($event)->reg_enableWaitingList && $this->isFull($event);
     }
 
     public function isFull(CalendarEventsModel $event): bool
@@ -92,12 +99,12 @@ class EventRegistration
             return false;
         }
 
-        $count = $this->getRegistrationCount($event);
+        $count = $this->getRegistrationCount($event, false);
 
         return $count >= (int) $event->reg_max;
     }
 
-    public function getRegistrationCount(CalendarEventsModel $event): int
+    public function getRegistrationCount(CalendarEventsModel $event, bool $excludeWaitingList = false): int
     {
         $event = $this->getMainEvent($event);
 
@@ -105,6 +112,10 @@ class EventRegistration
 
         if ($event->reg_requireConfirm) {
             $query .= ' AND confirmed = 1';
+        }
+
+        if ($event->reg_enableWaitingList && $excludeWaitingList) {
+            $query .= ' AND waiting != 1';
         }
 
         $query .= ';';

@@ -57,6 +57,7 @@ class EventRegistrationFormListener
         $registration->form = (int) $form->id;
         $registration->member = (int) $this->getMember()?->id ?? 0;
         $registration->amount = max(1, (int) ($submittedData['amount'] ?? 1));
+        $registration->waiting = $this->eventRegistration->isWaitingList($event);
         $registration->form_data = json_encode($submittedData, JSON_THROW_ON_ERROR);
 
         $registration->save();
