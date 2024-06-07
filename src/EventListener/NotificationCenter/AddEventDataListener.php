@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of the Contao Event Registration extension.
  *
- * (c) inspiredminds
+ * (c) INSPIRED MINDS
  *
  * @license LGPL-3.0-or-later
  */
@@ -25,11 +25,8 @@ use NotificationCenter\Model\Notification;
  */
 class AddEventDataListener
 {
-    private $eventRegistration;
-
-    public function __construct(EventRegistration $eventRegistration)
+    public function __construct(private readonly EventRegistration $eventRegistration)
     {
-        $this->eventRegistration = $eventRegistration;
     }
 
     public function __invoke(Message $message, array &$tokens, string $language, Gateway $gateway): bool
@@ -37,7 +34,7 @@ class AddEventDataListener
         // Get the current event, if applicable.
         $event = $this->eventRegistration->getCurrentEvent();
 
-        if (null === $event || !$this->isEventRegistrationFormNotification($message)) {
+        if (!$event || !$this->isEventRegistrationFormNotification($message)) {
             return true;
         }
 

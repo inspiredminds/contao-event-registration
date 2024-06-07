@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of the Contao Event Registration extension.
  *
- * (c) inspiredminds
+ * (c) INSPIRED MINDS
  *
  * @license LGPL-3.0-or-later
  */
@@ -26,8 +26,8 @@ class ConfigOnShowCallbackListener
     {
         foreach ($show as &$c) {
             foreach ($c as &$table) {
-                foreach ($table as $k => $v) {
-                    if (str_contains($k, 'form_data')) {
+                foreach (array_keys($table) as $k) {
+                    if (str_contains((string) $k, 'form_data')) {
                         unset($table[$k]);
                         break;
                     }
@@ -35,7 +35,12 @@ class ConfigOnShowCallbackListener
             }
         }
 
-        $formData = json_decode($row['form_data'] ?? '', true) ?? [];
+        try {
+            $formData = json_decode($row['form_data'] ?? '', true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException) {
+            $formData = [];
+        }
+
         $form = FormModel::findById((int) $row['form']);
         $t = FormFieldModel::getTable();
 
@@ -45,7 +50,7 @@ class ConfigOnShowCallbackListener
             if (null !== $form && null !== ($formField = FormFieldModel::findBy(["$t.pid = ?", "$t.name = ?"], [$form->id, $name])) && !empty($formField->label)) {
                 $label = $formField->label.' <small>'.$name.'</small>';
             }
-            
+
             if (\is_array($value)) {
                 $show['tl_event_registration'][0][$label] = implode("\n", $value);
             } else {

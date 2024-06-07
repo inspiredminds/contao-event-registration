@@ -29,24 +29,20 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Terminal42\NodeBundle\NodeManager;
 
 /**
- * @FrontendModule(type=EventRegistrationCancelController::TYPE, category="events")
+ * @FrontendModule(type=EventRegistrationCancelController::TYPE, category="events", template="mod_event_registration_cancel")
  */
 class EventRegistrationCancelController extends AbstractFrontendModuleController
 {
     public const TYPE = 'event_registration_cancel';
+
     public const ACTION = 'cancel';
 
-    private $eventRegistration;
-    private $nodeManager;
-    private $translator;
-    private $simpleTokenParser;
-
-    public function __construct(EventRegistration $eventRegistration, NodeManager $nodeManager, TranslatorInterface $translator, SimpleTokenParser $simpleTokenParser)
-    {
-        $this->eventRegistration = $eventRegistration;
-        $this->nodeManager = $nodeManager;
-        $this->translator = $translator;
-        $this->simpleTokenParser = $simpleTokenParser;
+    public function __construct(
+        private readonly EventRegistration $eventRegistration,
+        private readonly NodeManager $nodeManager,
+        private readonly TranslatorInterface $translator,
+        private readonly SimpleTokenParser $simpleTokenParser,
+    ) {
     }
 
     protected function getResponse(Template $template, ModuleModel $model, Request $request): Response
@@ -71,8 +67,9 @@ class EventRegistrationCancelController extends AbstractFrontendModuleController
         $event = CalendarEventsModel::findById((int) $registration->pid);
 
         $template->event = $event;
+
         $template->registration = $registration;
-        $template->content = function () use ($model): ?string {
+        $template->content = function () use ($model): string|null {
             if ($nodes = StringUtil::deserialize($model->nodes, true)) {
                 return implode('', $this->nodeManager->generateMultiple($nodes));
             }
@@ -111,7 +108,7 @@ class EventRegistrationCancelController extends AbstractFrontendModuleController
         $registration->save();
 
         // Send notification
-        if (!empty($model->nc_notification) && null !== ($notification = Notification::findByPk((int) $model->nc_notification))) {
+        if (!empty($model->nc_notification) && null !== ($notification = Notification::findById((int) $model->nc_notification))) {
             $notification->send($tokens);
         }
     }

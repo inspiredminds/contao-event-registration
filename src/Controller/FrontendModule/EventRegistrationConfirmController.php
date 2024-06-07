@@ -29,28 +29,23 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Terminal42\NodeBundle\NodeManager;
 
 /**
- * @FrontendModule(type=EventRegistrationConfirmController::TYPE, category="events")
+ * @FrontendModule(type=EventRegistrationConfirmController::TYPE, category="events", template="mod_event_registration_confirm")
  */
 class EventRegistrationConfirmController extends AbstractFrontendModuleController
 {
     public const TYPE = 'event_registration_confirm';
+
     public const ACTION = 'confirm';
 
-    private $eventRegistration;
-    private $nodeManager;
-    private $translator;
-
-    private $simpleTokenParser;
-
-    public function __construct(EventRegistration $eventRegistration, NodeManager $nodeManager, TranslatorInterface $translator, SimpleTokenParser $simpleTokenParser)
-    {
-        $this->eventRegistration = $eventRegistration;
-        $this->nodeManager = $nodeManager;
-        $this->translator = $translator;
-        $this->simpleTokenParser = $simpleTokenParser;
+    public function __construct(
+        private readonly EventRegistration $eventRegistration,
+        private readonly NodeManager $nodeManager,
+        private readonly TranslatorInterface $translator,
+        private readonly SimpleTokenParser $simpleTokenParser,
+    ) {
     }
 
-    protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
+    protected function getResponse(Template $template, ModuleModel $model, Request $request): Response
     {
         $uuid = $request->query->get('uuid');
         $action = $request->query->get('action');
@@ -72,8 +67,9 @@ class EventRegistrationConfirmController extends AbstractFrontendModuleControlle
         $event = CalendarEventsModel::findById((int) $registration->pid);
 
         $template->event = $event;
+
         $template->registration = $registration;
-        $template->content = function () use ($model): ?string {
+        $template->content = function () use ($model): string|null {
             if ($nodes = StringUtil::deserialize($model->nodes, true)) {
                 return implode('', $this->nodeManager->generateMultiple($nodes));
             }
@@ -121,7 +117,7 @@ class EventRegistrationConfirmController extends AbstractFrontendModuleControlle
         $registration->save();
 
         // Send notification
-        if (!empty($model->nc_notification) && null !== ($notification = Notification::findByPk((int) $model->nc_notification))) {
+        if (!empty($model->nc_notification) && null !== ($notification = Notification::findById((int) $model->nc_notification))) {
             $notification->send($tokens);
         }
     }

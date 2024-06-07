@@ -5,16 +5,17 @@ declare(strict_types=1);
 /*
  * This file is part of the Contao Event Registration extension.
  *
- * (c) inspiredminds
+ * (c) INSPIRED MINDS
  *
  * @license LGPL-3.0-or-later
  */
 
+use Contao\DC_Table;
 use InspiredMinds\ContaoEventRegistration\Controller\EventRegistrationExportController;
 
 $GLOBALS['TL_DCA']['tl_event_registration'] = [
     'config' => [
-        'dataContainer' => 'Table',
+        'dataContainer' => DC_Table::class,
         'ptable' => 'tl_calendar_events',
         'closed' => true,
         'doNotCopyRecords' => true,

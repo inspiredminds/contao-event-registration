@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of the Contao Event Registration extension.
  *
- * (c) inspiredminds
+ * (c) INSPIRED MINDS
  *
  * @license LGPL-3.0-or-later
  */
@@ -71,7 +71,7 @@ $GLOBALS['TL_DCA']['tl_calendar_events']['palettes']['__selector__'][] = 'reg_en
 $GLOBALS['TL_DCA']['tl_calendar_events']['subpalettes']['reg_enable'] = 'reg_form,reg_min,reg_max,reg_regEnd,reg_cancelEnd,reg_requireConfirm';
 
 foreach ($GLOBALS['TL_DCA']['tl_calendar_events']['palettes'] as $name => $palette) {
-    if (!\is_string($palette)) {
+    if (!is_string($palette)) {
         continue;
     }
 
@@ -84,9 +84,9 @@ foreach ($GLOBALS['TL_DCA']['tl_calendar_events']['palettes'] as $name => $palet
 
 $GLOBALS['TL_DCA']['tl_calendar_events']['config']['ctable'][] = 'tl_event_registration';
 
-$GLOBALS['TL_DCA']['tl_calendar_events']['list']['operations'] = \array_slice($GLOBALS['TL_DCA']['tl_calendar_events']['list']['operations'], 0, 6, true) + [
+$GLOBALS['TL_DCA']['tl_calendar_events']['list']['operations'] = array_slice($GLOBALS['TL_DCA']['tl_calendar_events']['list']['operations'], 0, 6, true) + [
     'registrations' => [
         'href' => 'table=tl_event_registration',
         'icon' => 'mgroup.svg',
     ],
-] + \array_slice($GLOBALS['TL_DCA']['tl_calendar_events']['list']['operations'], 6, \count($GLOBALS['TL_DCA']['tl_calendar_events']['list']['operations']) - 1, true);
+] + array_slice($GLOBALS['TL_DCA']['tl_calendar_events']['list']['operations'], 6, count($GLOBALS['TL_DCA']['tl_calendar_events']['list']['operations']) - 1, true);
