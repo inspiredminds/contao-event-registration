@@ -22,6 +22,7 @@ use Contao\StringUtil;
 use Contao\Template;
 use InspiredMinds\ContaoEventRegistration\EventRegistration;
 use InspiredMinds\ContaoEventRegistration\Model\EventRegistrationModel;
+use InspiredMinds\ContaoEventRegistration\WaitingListChecker;
 use NotificationCenter\Model\Notification;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -42,6 +43,7 @@ class EventRegistrationCancelController extends AbstractFrontendModuleController
         private readonly NodeManager $nodeManager,
         private readonly TranslatorInterface $translator,
         private readonly SimpleTokenParser $simpleTokenParser,
+        private readonly WaitingListChecker $waitingListChecker,
     ) {
     }
 
@@ -111,5 +113,8 @@ class EventRegistrationCancelController extends AbstractFrontendModuleController
         if (!empty($model->nc_notification) && null !== ($notification = Notification::findById((int) $model->nc_notification))) {
             $notification->send($tokens);
         }
+
+        // Process waiting lists
+        ($this->waitingListChecker)($event);
     }
 }

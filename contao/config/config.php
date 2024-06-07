@@ -26,7 +26,7 @@ foreach (['email_subject', 'email_text', 'email_html'] as $type) {
     $coreForm[$type][] = 'reg_cancel_url';
 }
 
-$tokensContent = ['event_*', 'reg_*', 'reg_count', 'reg_confirm_url', 'reg_confirm_url', 'admin_email'];
+$tokensContent = ['event_*', 'reg_*', 'reg_count', 'reg_confirm_url', 'reg_cancel_url', 'admin_email'];
 $tokensAddress = ['admin_email', 'reg_*', 'event_*'];
 
 $GLOBALS['NOTIFICATION_CENTER']['NOTIFICATION_TYPE']['event_registration'][NotificationTypes::CONFIRM] = [
@@ -42,3 +42,4 @@ $GLOBALS['NOTIFICATION_CENTER']['NOTIFICATION_TYPE']['event_registration'][Notif
 ];
 
 $GLOBALS['NOTIFICATION_CENTER']['NOTIFICATION_TYPE']['event_registration'][NotificationTypes::CANCEL] = &$GLOBALS['NOTIFICATION_CENTER']['NOTIFICATION_TYPE']['event_registration'][NotificationTypes::CONFIRM];
+$GLOBALS['NOTIFICATION_CENTER']['NOTIFICATION_TYPE']['event_registration'][NotificationTypes::WAITING_LIST_ADVANCEMENT] = &$GLOBALS['NOTIFICATION_CENTER']['NOTIFICATION_TYPE']['event_registration'][NotificationTypes::CONFIRM];
