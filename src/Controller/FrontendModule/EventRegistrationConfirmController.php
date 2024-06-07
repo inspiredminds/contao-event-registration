@@ -69,6 +69,7 @@ class EventRegistrationConfirmController extends AbstractFrontendModuleControlle
         $tokens = $this->eventRegistration->getSimpleTokens($event, $registration);
 
         $template->event = $event;
+
         $template->registration = $registration;
         $template->content = function () use ($model, $tokens): string|null {
             if ($nodes = StringUtil::deserialize($model->nodes, true)) {
