@@ -78,7 +78,7 @@ $GLOBALS['TL_DCA']['tl_event_registration'] = [
         'waiting' => [
             'inputType' => 'checkbox',
             'exclude' => true,
-            'eval' => ['tl_class' => 'w50', 'disabled' => false],
+            'eval' => ['tl_class' => 'w50', 'disabled' => true],
             'sql' => ['type' => 'boolean', 'default' => false],
         ],
         'form_data' => [
@@ -126,6 +126,6 @@ $GLOBALS['TL_DCA']['tl_event_registration'] = [
     ],
 
     'palettes' => [
-        'default' => '{reg_legend},form_data,amount,confirmed,cancelled,waiting',
+        'default' => '{reg_legend},form_data,amount,confirmed,cancelled',
     ],
 ];
