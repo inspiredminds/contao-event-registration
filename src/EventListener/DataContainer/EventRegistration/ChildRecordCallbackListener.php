@@ -16,14 +16,17 @@ use Contao\CoreBundle\ServiceAnnotation\Callback;
 use Contao\Image;
 use Contao\StringUtil;
 use InspiredMinds\ContaoEventRegistration\EventRegistration\LabelBuilder;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Callback(table="tl_event_registration", target="list.sorting.child_record")
  */
 class ChildRecordCallbackListener
 {
-    public function __construct(private readonly LabelBuilder $labelBuilder)
-    {
+    public function __construct(
+        private readonly LabelBuilder $labelBuilder,
+        private readonly TranslatorInterface $translator,
+    ) {
     }
 
     public function __invoke(array $row): string
@@ -42,14 +45,25 @@ class ChildRecordCallbackListener
         }
 
         $icon = 'visible_.svg';
+        $alt = '';
+        $attributes = ' style="float:left; margin-right:0.3em;"';
 
         if ($row['cancelled']) {
             $icon = 'unpublished.svg';
+            $alt = $this->translator->trans('tl_event_registration.cancelled.0', [], 'contao_tl_event_registration');
+        } elseif ($row['waiting']) {
+            $icon = 'news.svg';
+            $alt = $this->translator->trans('tl_event_registration.waiting.0', [], 'contao_tl_event_registration');
         } elseif ($row['confirmed']) {
             $icon = 'visible.svg';
+            $alt = $this->translator->trans('tl_event_registration.confirmed.0', [], 'contao_tl_event_registration');
         }
 
-        $label = Image::getHtml($icon, '', ' style="float:left; margin-right:0.3em;"').' '.$label;
+        if ($alt) {
+            $attributes .= ' title="'.$alt.'"';
+        }
+
+        $label = Image::getHtml($icon, '', $attributes).' '.$label;
 
         return '<div class="tl_content_left">'.$label.'</div>';
     }
