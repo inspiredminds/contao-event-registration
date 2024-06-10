@@ -18,4 +18,6 @@ $GLOBALS['TL_LANG']['tl_calendar_events']['reg_max'] = ['Maximale Anzahl', 'Eine
 $GLOBALS['TL_LANG']['tl_calendar_events']['reg_regEnd'] = ['Ende der Registrierung', 'Optionales Datum des Ende der Registrierungsmöglichkeit.'];
 $GLOBALS['TL_LANG']['tl_calendar_events']['reg_cancelEnd'] = ['Ende der Stornierung', 'Optionales Datum des Ende der Stornierungsmöglichkeit.'];
 $GLOBALS['TL_LANG']['tl_calendar_events']['reg_requireConfirm'] = ['Bestätigung erforderlich', 'Zählt nur bestätigte Registrierungen.'];
+$GLOBALS['TL_LANG']['tl_calendar_events']['reg_enableWaitingList'] = ['Warteliste aktivieren', 'Aktiviert die Warteliste für Anmeldungen nach dem Maximum.'];
+$GLOBALS['TL_LANG']['tl_calendar_events']['reg_waitingListAdvancementNotification'] = ['Benachrichtigung für Aufstrieg von Warteliste', 'Diese Benachrichtitung wird versendet wenn eine Teilnehmer*in von der Warteliste auf die reguläre Liste der Anmeldungen aufsteigt.'];
 $GLOBALS['TL_LANG']['tl_calendar_events']['registrations'] = 'Registrierungen';
