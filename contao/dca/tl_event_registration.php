@@ -92,7 +92,7 @@ $GLOBALS['TL_DCA']['tl_event_registration'] = [
         'sorting' => [
             'mode' => 4,
             'fields' => ['id'],
-            'headerFields' => ['title', 'reg_max'],
+            'headerFields' => ['title', 'reg_max', 'reg_waiting'],
             'disableGrouping' => true,
             'panelLayout' => 'limit',
         ],

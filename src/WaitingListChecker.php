@@ -51,9 +51,9 @@ class WaitingListChecker
                 }
 
                 // Fill up slots with waiting list entries
-                while ($this->eventRegistration->getRegistrationCount($event, true) < $event->reg_max) {
-                    // Get the next waiting registration entry
-                    $waitingRegistration = EventRegistrationModel::findOneBy(['pid = ?', 'waiting = 1', 'cancelled != 1'], [$event->id], ['order' => 'created ASC']);
+                while (($diff = $event->reg_max - $this->eventRegistration->getRegistrationCount($event, true)) > 0) {
+                    // Get the next waiting registration entry whose amount is equal or smaller to the diff
+                    $waitingRegistration = EventRegistrationModel::findOneBy(['pid = ?', 'waiting = 1', 'cancelled != 1', 'amount <= ?'], [$event->id, $diff], ['order' => 'created ASC']);
 
                     // If there are no waiting registrations, break
                     if (!$waitingRegistration) {
