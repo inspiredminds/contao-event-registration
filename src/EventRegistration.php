@@ -99,7 +99,7 @@ class EventRegistration
             return false;
         }
 
-        $count = $this->getRegistrationCount($event, false);
+        $count = $this->getRegistrationCount($event, true);
 
         return $count >= (int) $event->reg_max;
     }

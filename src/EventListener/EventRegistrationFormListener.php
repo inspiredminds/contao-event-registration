@@ -18,7 +18,9 @@ use Contao\Form;
 use Contao\FrontendUser;
 use InspiredMinds\ContaoEventRegistration\EventRegistration;
 use InspiredMinds\ContaoEventRegistration\Model\EventRegistrationModel;
+use InspiredMinds\ContaoEventRegistration\WaitingListChecker;
 use Ramsey\Uuid\Uuid;
+use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -34,6 +36,7 @@ class EventRegistrationFormListener
         private readonly EventRegistration $eventRegistration,
         private readonly Security $security,
         private readonly TranslatorInterface $translator,
+        private readonly LockFactory $lockFactory,
     ) {
     }
 
@@ -49,20 +52,30 @@ class EventRegistrationFormListener
             return;
         }
 
-        $member = $this->getMember();
+        $lock = $this->lockFactory->createLock(WaitingListChecker::class);
+        $lock->acquire(true);
 
-        $registration = new EventRegistrationModel();
-        $registration->pid = (int) $event->id;
-        $registration->created = time();
-        $registration->tstamp = time();
-        $registration->uuid = Uuid::uuid4()->toString();
-        $registration->form = (int) $form->id;
-        $registration->member = $member ? (int) $member->id : 0;
-        $registration->amount = max(1, (int) ($submittedData['amount'] ?? 1));
-        $registration->waiting = $this->eventRegistration->isWaitingList($event);
-        $registration->form_data = json_encode($submittedData, JSON_THROW_ON_ERROR);
+        try {
+            $amount = max(1, (int) ($submittedData['amount'] ?? 1));
+            $waiting = $this->eventRegistration->getRegistrationCount($event, true) + $amount > $event->reg_max;
 
-        $registration->save();
+            $member = $this->getMember();
+
+            $registration = new EventRegistrationModel();
+            $registration->pid = (int) $event->id;
+            $registration->created = time();
+            $registration->tstamp = time();
+            $registration->uuid = Uuid::uuid4()->toString();
+            $registration->form = (int) $form->id;
+            $registration->member = $member ? (int) $member->id : 0;
+            $registration->amount = $amount;
+            $registration->waiting = $waiting;
+            $registration->form_data = json_encode($submittedData, JSON_THROW_ON_ERROR);
+
+            $registration->save();
+        } finally {
+            $lock->release();
+        }
 
         // Inject event registration UUID
         $t = EventRegistrationModel::getTable();

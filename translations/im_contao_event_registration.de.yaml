@@ -14,4 +14,5 @@ already_cancelled: Diese Registrierung wurde bereits storniert.
 cannot_confirm: Registrierungen für dieses Event können nicht mehr bestätigt werden.
 cannot_cancel: Anmeldungen für dieses Event können nicht mehr storniert werden.
 header_count_title: Anmeldungen
+header_waiting_title: Warteliste
 is_waiting_list: Registrierungen zu diesem Event sind nur mehr mit Warteliste möglich.

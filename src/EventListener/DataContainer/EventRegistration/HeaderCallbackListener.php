@@ -34,9 +34,11 @@ class HeaderCallbackListener
     public function __invoke(array $labels, DataContainer $dc): array
     {
         $event = $this->helper->getMainEvent(CalendarEventsModel::findById($dc->id));
-        $label = $this->helper->getRegistrationCount($event);
+        $count = $this->helper->getRegistrationCount($event, true);
+        $waiting = $this->helper->getRegistrationCount($event) - $count;
 
-        $labels[$this->trans->trans('header_count_title', [], 'im_contao_event_registration')] = $label;
+        $labels[$this->trans->trans('header_count_title', [], 'im_contao_event_registration')] = $count;
+        $labels[$this->trans->trans('header_waiting_title', [], 'im_contao_event_registration')] = $waiting;
 
         return $labels;
     }
