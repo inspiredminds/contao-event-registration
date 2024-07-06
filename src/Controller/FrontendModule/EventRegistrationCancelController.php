@@ -71,7 +71,6 @@ class EventRegistrationCancelController extends AbstractFrontendModuleController
         $tokens = $this->eventRegistration->getSimpleTokens($event, $registration);
 
         $template->event = $event;
-
         $template->registration = $registration;
         $template->content = function () use ($model, $tokens): string|null {
             if ($nodes = StringUtil::deserialize($model->nodes, true)) {
