@@ -19,7 +19,7 @@ use Contao\FrontendUser;
 use InspiredMinds\ContaoEventRegistration\EventRegistration;
 use InspiredMinds\ContaoEventRegistration\Model\EventRegistrationModel;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -32,7 +32,7 @@ class EventRegistrationFormListener
 {
     public function __construct(
         private readonly EventRegistration $eventRegistration,
-        private readonly Security $security,
+        private readonly TokenStorageInterface $tokenStorage,
         private readonly TranslatorInterface $translator,
     ) {
     }
@@ -91,9 +91,7 @@ class EventRegistrationFormListener
      */
     private function getMember(): FrontendUser|null
     {
-        $user = $this->security->getUser();
-
-        if ($user instanceof FrontendUser) {
+        if (($user = $this->tokenStorage->getToken()?->getUser()) instanceof FrontendUser) {
             return $user;
         }
 

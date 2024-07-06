@@ -12,10 +12,10 @@ declare(strict_types=1);
 
 namespace InspiredMinds\ContaoEventRegistration\EventListener\DataContainer\CalendarEvents;
 
-use Contao\BackendUser;
+use Contao\CoreBundle\Security\ContaoCorePermissions;
 use Contao\CoreBundle\ServiceAnnotation\Callback;
 use Doctrine\DBAL\Connection;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * @Callback(table="tl_calendar_events", target="fields.reg_form.options")
@@ -24,27 +24,26 @@ class RegistrationFormOptionsCallbackListener
 {
     public function __construct(
         private readonly Connection $db,
-        private readonly Security $security,
+        private readonly AuthorizationCheckerInterface $auth,
     ) {
     }
 
     public function __invoke(): array
     {
-        $user = $this->security->getUser();
-
-        if (!$user instanceof BackendUser || !$user->isAdmin && !\is_array($user->forms)) {
+        if (!$this->auth->isGranted('ROLE_USER')) {
             return [];
         }
 
-        if (!$forms = $this->db->fetchAllAssociative('SELECT id, title FROM tl_form ORDER BY title')) {
+        if (!$forms = $this->db->fetchAllKeyValue('SELECT id, title FROM tl_form ORDER BY title')) {
             return [];
         }
 
         $options = [];
+        $isAdmin = $this->auth->isGranted('ROLE_ADMIN');
 
-        foreach ($forms as $form) {
-            if ($user->hasAccess($form['id'], 'forms')) {
-                $options[$form['id']] = $form['title'].' (ID '.$form['id'].')';
+        foreach ($forms as $formId => $formTitle) {
+            if ($isAdmin || $this->auth->isGranted(ContaoCorePermissions::USER_CAN_EDIT_FORM, $formId)) {
+                $options[(int) $formId] = $formTitle.' (ID '.$formId.')';
             }
         }
 
