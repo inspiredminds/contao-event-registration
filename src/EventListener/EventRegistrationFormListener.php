@@ -49,15 +49,13 @@ class EventRegistrationFormListener
             return;
         }
 
-        $member = $this->getMember();
-
         $registration = new EventRegistrationModel();
         $registration->pid = (int) $event->id;
         $registration->created = time();
         $registration->tstamp = time();
         $registration->uuid = Uuid::uuid4()->toString();
         $registration->form = (int) $form->id;
-        $registration->member = $member ? (int) $member->id : 0;
+        $registration->member = (int) $this->getMember()?->id ?? 0;
         $registration->amount = max(1, (int) ($submittedData['amount'] ?? 1));
         $registration->form_data = json_encode($submittedData, JSON_THROW_ON_ERROR);
 
