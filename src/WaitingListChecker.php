@@ -40,7 +40,7 @@ class WaitingListChecker
 
         try {
             // Go through all upcoming events, if no event given
-            $events = $event ? [$event] : CalendarEventsModel::findUpcomingByPids(CalendarModel::findAll()->fetchEach('id'));
+            $events = $event ? [$event] : CalendarEventsModel::findUpcomingByPids(CalendarModel::findAll()?->fetchEach('id') ?? []);
 
             foreach ($events as $event) {
                 $event = $this->eventRegistration->getMainEvent($event);
