@@ -67,8 +67,25 @@ $GLOBALS['TL_DCA']['tl_calendar_events']['fields']['reg_requireConfirm'] = [
     'sql' => ['type' => 'boolean', 'default' => false],
 ];
 
+$GLOBALS['TL_DCA']['tl_calendar_events']['fields']['reg_enableWaitingList'] = [
+    'inputType' => 'checkbox',
+    'exclude' => true,
+    'eval' => ['tl_class' => 'clr w50', 'submitOnChange' => true],
+    'sql' => ['type' => 'boolean', 'default' => false],
+];
+
+$GLOBALS['TL_DCA']['tl_calendar_events']['fields']['reg_waitingListAdvancementNotification'] = [
+    'exclude' => true,
+    'inputType' => 'select',
+    'eval' => ['includeBlankOption' => true, 'chosen' => true, 'tl_class' => 'w50'],
+    'sql' => ['type' => 'integer', 'unsigned' => true, 'default' => 0],
+    'relation' => ['type' => 'hasOne', 'load' => 'lazy', 'table' => 'tl_nc_notification'],
+];
+
 $GLOBALS['TL_DCA']['tl_calendar_events']['palettes']['__selector__'][] = 'reg_enable';
-$GLOBALS['TL_DCA']['tl_calendar_events']['subpalettes']['reg_enable'] = 'reg_form,reg_min,reg_max,reg_regEnd,reg_cancelEnd,reg_requireConfirm';
+$GLOBALS['TL_DCA']['tl_calendar_events']['palettes']['__selector__'][] = 'reg_enableWaitingList';
+$GLOBALS['TL_DCA']['tl_calendar_events']['subpalettes']['reg_enable'] = 'reg_form,reg_min,reg_max,reg_regEnd,reg_cancelEnd,reg_requireConfirm,reg_enableWaitingList';
+$GLOBALS['TL_DCA']['tl_calendar_events']['subpalettes']['reg_enableWaitingList'] = 'reg_waitingListAdvancementNotification';
 
 foreach ($GLOBALS['TL_DCA']['tl_calendar_events']['palettes'] as $name => $palette) {
     if (!is_string($palette)) {

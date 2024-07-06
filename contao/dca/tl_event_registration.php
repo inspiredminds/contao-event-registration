@@ -75,6 +75,12 @@ $GLOBALS['TL_DCA']['tl_event_registration'] = [
             'eval' => ['tl_class' => 'w50'],
             'sql' => ['type' => 'boolean', 'default' => false],
         ],
+        'waiting' => [
+            'inputType' => 'checkbox',
+            'exclude' => true,
+            'eval' => ['tl_class' => 'w50', 'disabled' => true],
+            'sql' => ['type' => 'boolean', 'default' => false],
+        ],
         'form_data' => [
             'inputType' => 'textarea',
             'eval' => ['readonly' => true],
@@ -86,7 +92,7 @@ $GLOBALS['TL_DCA']['tl_event_registration'] = [
         'sorting' => [
             'mode' => 4,
             'fields' => ['id'],
-            'headerFields' => ['title', 'reg_max'],
+            'headerFields' => ['title', 'reg_max', 'reg_waiting'],
             'disableGrouping' => true,
             'panelLayout' => 'limit',
         ],

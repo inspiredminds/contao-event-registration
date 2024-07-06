@@ -19,6 +19,8 @@ After installation you will have the possibility to enable registration for indi
 - **End of registraton**: You can define an optional date after which registration will not be possible anymore.
 - **End of cancellation**: You cand efine an optional date after which cancellation will not be possible anymore.
 - **Require confirmation**: When enabled, only confirmed registrations count towards the total number of registrations.
+- **Enable waiting list**: Keeps the registration open after the maximum amount of participants is reached. All registrations will be put on a waiting list and will automatically be advanced, if prior registrations are cancelled.
+- **Advancement from waiting list notification**: This notification will be sent when a participant is advanced from the waiting list.
 
 
 ### Modules
@@ -63,6 +65,7 @@ The following template variables are available in event templates as well as the
 - `$this->canRegister`: Whether registration is possible for this event.
 - `$this->registrationForm`: Contains the registration form.
 - `$this->isFull`: Whether the maximum amount of registrations have been reached for this event.
+- `$this->isWaitingList`: Whether the maximum amount of registrations have been reached for this event and waiting list is enabled.
 - `$this->registrationCount`: The current registration count for this event.
 - `$this->reg_min`: The minimum amount of registrations for this event.
 - `$this->reg_max`: The maximum amount of registrations for this event.

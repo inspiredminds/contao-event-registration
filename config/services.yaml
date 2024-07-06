@@ -3,6 +3,7 @@ parameters:
         - !php/const Terminal42\NotificationCenterBundle\NotificationType\FormGeneratorNotificationType::NAME
         - !php/const InspiredMinds\ContaoEventRegistration\NotificationTypes::CONFIRM
         - !php/const InspiredMinds\ContaoEventRegistration\NotificationTypes::CANCEL
+        - !php/const InspiredMinds\ContaoEventRegistration\NotificationTypes::WAITING_LIST_ADVANCEMENT
 
 services:
     _defaults:
