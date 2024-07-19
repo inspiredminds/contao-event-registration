@@ -18,6 +18,7 @@ use Contao\CoreBundle\Framework\ContaoFramework;
 use InspiredMinds\ContaoEventRegistration\Model\EventRegistrationModel;
 use NotificationCenter\Model\Notification;
 use Symfony\Component\Lock\LockFactory;
+use Terminal42\NotificationCenterBundle\NotificationCenter;
 
 class WaitingListChecker
 {
@@ -25,6 +26,7 @@ class WaitingListChecker
         private readonly ContaoFramework $framework,
         private readonly LockFactory $lockFactory,
         private readonly EventRegistration $eventRegistration,
+        private readonly NotificationCenter $notificationCenter,
     ) {
     }
 
@@ -64,8 +66,8 @@ class WaitingListChecker
                     $waitingRegistration->save();
 
                     // Send notification
-                    if ($event->reg_waitingListAdvancementNotification && ($notification = Notification::findById((int) $event->reg_waitingListAdvancementNotification))) {
-                        $notification->send($this->eventRegistration->getSimpleTokens($event, $waitingRegistration));
+                    if ($event->reg_waitingListAdvancementNotification) {
+                        $this->notificationCenter->sendNotification($event->reg_waitingListAdvancementNotification, $this->eventRegistration->getSimpleTokens($event, $waitingRegistration));
                     }
                 }
             }
