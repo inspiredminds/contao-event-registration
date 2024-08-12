@@ -27,9 +27,11 @@ class GetNotificationTypeForModuleConfigEventListener
             return;
         }
 
-        match ($event->getModuleConfig()->getType()) {
-            EventRegistrationConfirmController::TYPE => $event->setNotificationType(NotificationTypes::CONFIRM),
-            EventRegistrationCancelController::TYPE => $event->setNotificationType(NotificationTypes::CANCEL),
-        };
+        switch ($event->getModuleConfig()->getType()) {
+            case EventRegistrationConfirmController::TYPE: $event->setNotificationType(NotificationTypes::CONFIRM);
+                break;
+            case EventRegistrationCancelController::TYPE: $event->setNotificationType(NotificationTypes::CANCEL);
+                break;
+        }
     }
 }

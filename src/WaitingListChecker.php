@@ -16,7 +16,6 @@ use Contao\CalendarEventsModel;
 use Contao\CalendarModel;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use InspiredMinds\ContaoEventRegistration\Model\EventRegistrationModel;
-use NotificationCenter\Model\Notification;
 use Symfony\Component\Lock\LockFactory;
 use Terminal42\NotificationCenterBundle\NotificationCenter;
 
