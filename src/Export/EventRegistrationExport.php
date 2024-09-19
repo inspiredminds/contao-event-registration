@@ -84,6 +84,11 @@ class EventRegistrationExport
                     $value = (new Date($value))->{$config['eval']['rgxp']};
                 }
 
+                // Implode multiple values
+                if (\is_array($value)) {
+                    $value = self::implodeRecursively($value);
+                }
+
                 $row[] = $value;
             }
 
@@ -117,5 +122,16 @@ class EventRegistrationExport
         $formDataHeaders = array_diff(array_keys($formDataHeaders), $header);
 
         return array_unique([...$header, ...$formDataHeaders]);
+    }
+
+    private static function implodeRecursively(array $data): string
+    {
+        foreach ($data as &$v) {
+            if (\is_array($v)) {
+                $v = self::implodeRecursively($v);
+            }
+        }
+
+        return implode(', ', $data);
     }
 }
