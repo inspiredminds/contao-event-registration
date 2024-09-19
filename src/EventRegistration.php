@@ -87,7 +87,9 @@ class EventRegistration
 
     public function isWaitingList(CalendarEventsModel $event): bool
     {
-        return $this->getMainEvent($event)->reg_enableWaitingList && $this->isFull($event);
+        $event = $this->getMainEvent($event);
+
+        return \strlen((string) $event->reg_max) > 0 && $event->reg_enableWaitingList && $this->isFull($event);
     }
 
     public function isFull(CalendarEventsModel $event): bool
@@ -95,7 +97,7 @@ class EventRegistration
         $event = $this->getMainEvent($event);
 
         // No limit defined?
-        if (null === $event->reg_max || '' === $event->reg_max) {
+        if (\strlen((string) $event->reg_max) === 0) {
             return false;
         }
 
@@ -114,7 +116,7 @@ class EventRegistration
             $query .= ' AND confirmed = 1';
         }
 
-        if ($event->reg_enableWaitingList && $excludeWaitingList) {
+        if (\strlen((string) $event->reg_max) > 0 && $event->reg_enableWaitingList && $excludeWaitingList) {
             $query .= ' AND waiting != 1';
         }
 
