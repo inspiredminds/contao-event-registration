@@ -57,7 +57,7 @@ class EventRegistrationFormListener
 
         try {
             $amount = max(1, (int) ($submittedData['amount'] ?? 1));
-            $waiting = $this->eventRegistration->getRegistrationCount($event, true) + $amount > $event->reg_max;
+            $waiting = '' !== (string) $event->reg_max && ($this->eventRegistration->getRegistrationCount($event, true) + $amount) > $event->reg_max;
 
             $member = $this->getMember();
 
