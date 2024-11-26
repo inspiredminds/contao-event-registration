@@ -10,8 +10,9 @@ return static function (ECSConfig $ecsConfig): void {
     $ecsConfig->sets([__DIR__.'/vendor/contao/easy-coding-standard/config/contao.php']);
 
     $ecsConfig->paths([
-        __DIR__.'/src',
+        __DIR__.'/config',
         __DIR__.'/contao',
+        __DIR__.'/src',
     ]);
 
     $ecsConfig->ruleWithConfiguration(HeaderCommentFixer::class, [

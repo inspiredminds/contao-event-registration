@@ -26,17 +26,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Attribute\AsController;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
 #[AsController]
-#[Route(
-    path: '/contao/eventregistration/export/{eventId}',
-    name: self::class,
-    defaults: ['_scope' => 'backend'],
-)]
 class EventRegistrationExportController extends AbstractBackendController implements ServiceSubscriberInterface
 {
     public function __construct(
@@ -51,7 +45,7 @@ class EventRegistrationExportController extends AbstractBackendController implem
         $event = CalendarEventsModel::findById($eventId);
 
         if (null === $event) {
-            throw new PageNotFoundException();
+            throw new PageNotFoundException('The given event does not exist.');
         }
 
         /** @var AttributeBagInterface $backendSession */

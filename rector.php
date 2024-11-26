@@ -9,7 +9,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->sets([__DIR__.'/vendor/contao/rector/config/contao.php']);
 
     $rectorConfig->paths([
-        __DIR__.'/src',
+        __DIR__.'/config',
         __DIR__.'/contao',
     ]);
 
