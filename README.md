@@ -17,7 +17,7 @@ After installation you will have the possibility to enable registration for indi
 - **Minimum amount of participants**: You can define an optional minimum amount of participants, which you can then display in the front end (together with the currently registered participants).
 - **Maximum amount of participants**: You can define an optional maximum amount of participants. If this number is reached, registration will not be possible anymore.
 - **End of registraton**: You can define an optional date after which registration will not be possible anymore.
-- **End of cancellation**: You cand efine an optional date after which cancellation will not be possible anymore.
+- **End of cancellation**: You can define an optional date after which cancellation will not be possible anymore.
 - **Require confirmation**: When enabled, only confirmed registrations count towards the total number of registrations.
 - **Enable waiting list**: Keeps the registration open after the maximum amount of participants is reached. All registrations will be put on a waiting list and will automatically be advanced, if prior registrations are cancelled.
 - **Advancement from waiting list notification**: This notification will be sent when a participant is advanced from the waiting list.
