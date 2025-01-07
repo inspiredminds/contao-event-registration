@@ -46,9 +46,18 @@ class EventRegistrationFormListener
             return;
         }
 
-        $event = $this->getEvent(true);
+        // Get the current event first
+        if (!$event = $this->getEvent(false)) {
+            return;
+        }
 
-        if (!$event || !$this->eventRegistration->canRegister($event)) {
+        // Check if the registration is possible for the current event
+        if (!$this->eventRegistration->canRegister($event)) {
+            return;
+        }
+
+        // Retrieve the main event for its other settings
+        if (!$event = $this->eventRegistration->getMainEvent($event)) {
             return;
         }
 
