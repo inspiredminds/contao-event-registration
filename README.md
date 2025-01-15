@@ -78,7 +78,7 @@ The following template variables are available in event templates as well as the
 Within notifications, _as well as the node content of the confirmation and cancellation modules_, the following simple tokens are available:
 
 - `##event_*##`: All variables of the event.
-- `##reg_*##`: All variables of the registration.
+- `##reg_*##`: All variables of the registration (this includes all form data).
 - `##reg_amount##`: The amount of people for one registration.
 - `##reg_count##`: The respective registration count.
 - `##reg_confirm_url##`: The URL with which the registration can be confirmed.
