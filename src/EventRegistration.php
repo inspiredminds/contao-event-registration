@@ -192,7 +192,7 @@ class EventRegistration
                     }
                 }
 
-                $tokens['reg_'.$key] = $value;
+                $tokens['reg_'.$key] = \is_array($value) ? implode(', ', $value) : $value;
             }
 
             $tokens['reg_confirm_url'] = $this->createStatusUpdateUrl($event, $registration, EventRegistrationConfirmController::ACTION);
