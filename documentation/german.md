@@ -1,5 +1,4 @@
 Contao Event Registrierung
-=https://github.com/emskopp2/contao-event-registration==
 
 Diese Contao Erweiterung ermöglicht die Registrerung (Buchung) von Events.
 
