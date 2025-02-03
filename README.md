@@ -16,7 +16,7 @@ After installation you will have the possibility to enable registration for indi
 - **Registration form**: Select a form from the form generator which will be used for the registration. All the form's data will be saved for each registration. The form is processed as usual, i. e. notifications emails are also sent.
 - **Minimum amount of participants**: You can define an optional minimum amount of participants, which you can then display in the front end (together with the currently registered participants).
 - **Maximum amount of participants**: You can define an optional maximum amount of participants. If this number is reached, registration will not be possible anymore.
-- **End of registraton**: You can define an optional date after which registration will not be possible anymore.
+- **End of registration**: You can define an optional date after which registration will not be possible anymore.
 - **End of cancellation**: You can define an optional date after which cancellation will not be possible anymore.
 - **Require confirmation**: When enabled, only confirmed registrations count towards the total number of registrations.
 - **Enable waiting list**: Keeps the registration open after the maximum amount of participants is reached. All registrations will be put on a waiting list and will automatically be advanced, if prior registrations are cancelled.
