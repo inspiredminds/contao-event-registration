@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace InspiredMinds\ContaoEventRegistration\EventListener;
 
 use Contao\CalendarEventsModel;
-use Contao\CoreBundle\ServiceAnnotation\Hook;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use Contao\Form;
 use Contao\FrontendUser;
 use InspiredMinds\ContaoEventRegistration\EventRegistration;
@@ -27,9 +27,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * Creates a new event registration record.
  * Priority is higher so that it is executed before the notification center.
- *
- * @Hook("processFormData", priority=10)
  */
+#[AsHook('processFormData', priority: 10)]
 class EventRegistrationFormListener
 {
     public function __construct(

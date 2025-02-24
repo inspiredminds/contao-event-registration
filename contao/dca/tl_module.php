@@ -24,15 +24,6 @@ $GLOBALS['TL_DCA']['tl_module']['palettes'][EventRegistrationCalendarController:
 $class = $GLOBALS['TL_DCA']['tl_module']['fields']['jumpTo']['eval']['tl_class'] ?? '';
 $GLOBALS['TL_DCA']['tl_module']['fields']['jumpTo']['eval']['tl_class'] = trim($class.' clr');
 
-$GLOBALS['TL_DCA']['tl_module']['fields']['jumpTo_er'] = [
-    'exclude' => true,
-    'inputType' => 'pageTree',
-    'foreignKey' => 'tl_page.title',
-    'eval' => ['fieldType' => 'radio'],
-    'sql' => ['type' => 'integer', 'unsigned' => true, 'default' => 0],
-    'relation' => ['type' => 'hasOne', 'load' => 'lazy'],
-];
-
 $GLOBALS['TL_DCA']['tl_module']['fields']['cal_ctemplate_er'] = [
     'label' => &$GLOBALS['TL_LANG']['tl_module']['cal_ctemplate'],
     'exclude' => true,
@@ -53,6 +44,5 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['cal_ctemplate_er'] = [
 PaletteManipulator::create()
     ->addField('cal_ctemplate_er', 'cal_ctemplate')
     ->removeField('cal_ctemplate')
-    ->addField('jumpTo_er', 'jumpTo')
     ->applyToPalette(EventRegistrationCalendarController::TYPE, 'tl_module')
 ;
