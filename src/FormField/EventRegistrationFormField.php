@@ -53,4 +53,11 @@ class EventRegistrationFormField extends Widget
 
         return parent::parse(array_merge($attributes ?? [], ['events' => $events]));
     }
+
+    public function validate(): void
+    {
+        $this->rgxp = null;
+
+        parent::validate();
+    }
 }

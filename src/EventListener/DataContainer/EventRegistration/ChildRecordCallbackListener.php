@@ -37,7 +37,7 @@ class ChildRecordCallbackListener
                 $formData = [];
             }
 
-            $label = StringUtil::substr(implode(', ', array_filter($formData)), 128);
+            $label = StringUtil::substr($this->flatten($formData), 128);
         }
 
         $icon = 'visible_.svg';
@@ -62,5 +62,10 @@ class ChildRecordCallbackListener
         $label = Image::getHtml($icon, '', $attributes).' '.$label;
 
         return '<div class="tl_content_left">'.$label.'</div>';
+    }
+
+    private function flatten(array $data): string
+    {
+        return implode(', ', array_map(fn ($value) => \is_array($value) ? $this->flatten($value) : $value, $data));
     }
 }

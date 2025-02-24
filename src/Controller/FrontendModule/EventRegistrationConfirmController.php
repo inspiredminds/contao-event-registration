@@ -59,17 +59,38 @@ class EventRegistrationConfirmController extends AbstractFrontendModuleControlle
             throw new PageNotFoundException('No UUID given.');
         }
 
-        $registration = EventRegistrationModel::findOneByUuid($uuid);
+        $tokens = [];
+        $registrations = [];
 
-        if (null === $registration) {
-            throw new PageNotFoundException('No registration found.');
+        foreach ((array) $uuid as $uuid) {
+            if (!$registration = EventRegistrationModel::findOneByUuid($uuid)) {
+                throw new PageNotFoundException('No registration found.');
+            }
+
+            $registrations[] = $registration;
+            $event = CalendarEventsModel::findById((int) $registration->pid);
+            $newTokens = $this->eventRegistration->getSimpleTokens($event, $registration);
+
+            foreach ($newTokens as $k => $v) {
+                if (isset($tokens[$k])) {
+                    $tokens[$k] .= ', '.$v;
+                } else {
+                    $tokens[$k] = $v;
+                }
+            }
+
+            $template->event = $event;
+            $template->registration = $registration;
+
+            $this->processConfirm($template, $model, $event, $registration, $tokens);
         }
 
-        $event = CalendarEventsModel::findById((int) $registration->pid);
-        $tokens = $this->eventRegistration->getSimpleTokens($event, $registration);
+        unset($tokens['reg_confirm_url']);
 
-        $template->event = $event;
-        $template->registration = $registration;
+        if (\is_array($uuid) && $registrations) {
+            $tokens['reg_cancel_url'] = $this->eventRegistration->createStatusUpdateUrlMultiple($registrations, EventRegistrationCancelController::ACTION);
+        }
+        dd($tokens);
         $template->content = function () use ($model, $tokens): string|null {
             if ($nodes = StringUtil::deserialize($model->nodes, true)) {
                 return $this->simpleTokenParser->parse(implode('', $this->nodeManager->generateMultiple($nodes)), $tokens);
@@ -77,8 +98,6 @@ class EventRegistrationConfirmController extends AbstractFrontendModuleControlle
 
             return null;
         };
-
-        $this->processConfirm($template, $model, $event, $registration, $tokens);
 
         return $template->getResponse();
     }

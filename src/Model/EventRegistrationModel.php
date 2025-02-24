@@ -14,6 +14,8 @@ use Contao\Model;
  * @property int    $id
  * @property int    $pid
  * @property int    $tstamp
+ * @property string $uuid
+ * @property int    $created
  * @property int    $form
  * @property int    $member
  * @property int    $amount

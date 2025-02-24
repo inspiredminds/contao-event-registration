@@ -60,7 +60,7 @@ class MultipleEventRegistrationFormListener
         $lock->acquire(true);
 
         try {
-            $registeredEvents = [];
+            $registrations = [];
 
             foreach ($submittedData[$formField->name] as $eventId) {
                 if (!$event = CalendarEventsModel::findById($eventId)) {
@@ -93,31 +93,35 @@ class MultipleEventRegistrationFormListener
 
                 $registration->save();
 
-                // Inject event registration UUID
-                $t = EventRegistrationModel::getTable();
-                $submittedData['event_registration_uuid'] = $registration->uuid;
-                $labels['event_registration_uuid'] = $this->translator->trans($t.'.uuid.0', [], 'contao_'.$t);
+                $registrations[] = $registration;
             }
+
+            /*
+            $submittedData['reg_confirm_url'] = $this->eventRegistration->createStatusUpdateUrlMultiple($registrations, EventRegistrationConfirmController::ACTION);
+            $submittedData['reg_cancel_url'] = $this->eventRegistration->createStatusUpdateUrlMultiple($registrations, EventRegistrationCancelController::ACTION);
+
+            $labels['reg_confirm_url'] = $this->translator->trans('nc_tokens.event_registration.reg_confirm_url', [], 'contao_nc_tokens');
+            $labels['reg_cancel_url'] = $this->translator->trans('nc_tokens.event_registration.reg_cancel_url', [], 'contao_nc_tokens');
+            */
+
+            $submittedData[$formField->name] = implode(', ', array_map(
+                static function (EventRegistrationModel $reg): string|null {
+                    if ($event = CalendarEventsModel::findById($reg->pid)) {
+                        return $event->title;
+                    }
+
+                    return null;
+                },
+                $registrations,
+            ));
+
+            $submittedData['event_registration_uuids'] = array_map(static fn (EventRegistrationModel $reg): string => $reg->uuid, $registrations);
+
+            $t = EventRegistrationModel::getTable();
+            $labels['event_registration_uuids'] = $this->translator->trans($t.'.uuid.0', [], 'contao_'.$t);
         } finally {
             $lock->release();
         }
-    }
-
-    /**
-     * Returns the current event, if applicable.
-     */
-    private function getEvent(bool $returnMainEvent = true): CalendarEventsModel|null
-    {
-        if (!$event = $this->eventRegistration->getCurrentEvent()) {
-            return null;
-        }
-
-        // Return main event if connected via changelanguage
-        if ($returnMainEvent) {
-            return $this->eventRegistration->getMainEvent($event);
-        }
-
-        return $event;
     }
 
     /**

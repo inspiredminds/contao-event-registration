@@ -17,6 +17,7 @@ use Contao\CalendarModel;
 use Contao\Controller;
 use Contao\Date;
 use Contao\Input;
+use Contao\Model\Collection;
 use Contao\PageModel;
 use Contao\Template;
 use Doctrine\DBAL\Connection;
@@ -273,6 +274,62 @@ class EventRegistration
             $page = PageModel::findById($calendar->jumpTo);
 
             return $page->getAbsoluteUrl('/'.$event->alias).'?'.http_build_query($params);
+        }
+
+        return $page->getAbsoluteUrl().'?'.http_build_query($params);
+    }
+
+    /**
+     * @param Collection|list<EventRegistrationModel> $registrations
+     */
+    public function createStatusUpdateUrlMultiple(Collection|array $registrations, string $action): string
+    {
+        if (!\in_array($action, [EventRegistrationConfirmController::ACTION, EventRegistrationCancelController::ACTION], true)) {
+            throw new \InvalidArgumentException('Invalid action parameter "'.$action.'."');
+        }
+
+        if ($registrations instanceof Collection) {
+            $registrations = $registrations->getModels();
+        }
+
+        /** @var list<EventRegistrationModel> $registrations */
+        if ([] === $registrations) {
+            throw new \RuntimeException('No registrations given.');
+        }
+
+        $params = [
+            'action' => $action,
+            'uuid' => array_map(static fn (EventRegistrationModel $reg): string => $reg->uuid, $registrations),
+        ];
+
+        if (!$firstEvent = CalendarEventsModel::findById(reset($registrations)->pid)) {
+            throw new \RuntimeException('Could not load event.');
+        }
+
+        $calendar = CalendarModel::findById($firstEvent->pid);
+
+        $page = null;
+
+        switch ($action) {
+            case EventRegistrationConfirmController::ACTION:
+                if ($calendar->reg_confirm_page) {
+                    $page = PageModel::findById($calendar->reg_confirm_page);
+                }
+
+                break;
+
+            case EventRegistrationCancelController::ACTION:
+                if ($calendar->reg_cancel_page) {
+                    $page = PageModel::findById($calendar->reg_cancel_page);
+                }
+
+                break;
+        }
+
+        if (null === $page) {
+            $page = PageModel::findById($calendar->jumpTo);
+
+            return $page->getAbsoluteUrl('/'.$firstEvent->alias).'?'.http_build_query($params);
         }
 
         return $page->getAbsoluteUrl().'?'.http_build_query($params);
