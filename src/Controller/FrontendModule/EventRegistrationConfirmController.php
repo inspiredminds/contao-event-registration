@@ -48,49 +48,37 @@ class EventRegistrationConfirmController extends AbstractFrontendModuleControlle
 
     protected function getResponse(Template $template, ModuleModel $model, Request $request): Response
     {
-        $uuid = $request->query->get('uuid');
+        $uuids = $request->query->all()['uuid'] ?? null;
         $action = $request->query->get('action');
 
         if (self::ACTION !== $action) {
             return new Response();
         }
 
-        if (empty($uuid)) {
+        if (empty($uuids)) {
             throw new PageNotFoundException('No UUID given.');
         }
 
-        $tokens = [];
         $registrations = [];
+        $template->message = [];
 
-        foreach ((array) $uuid as $uuid) {
+        foreach ((array) $uuids as $uuid) {
             if (!$registration = EventRegistrationModel::findOneByUuid($uuid)) {
                 throw new PageNotFoundException('No registration found.');
             }
 
             $registrations[] = $registration;
             $event = CalendarEventsModel::findById((int) $registration->pid);
-            $newTokens = $this->eventRegistration->getSimpleTokens($event, $registration);
-
-            foreach ($newTokens as $k => $v) {
-                if (isset($tokens[$k])) {
-                    $tokens[$k] .= ', '.$v;
-                } else {
-                    $tokens[$k] = $v;
-                }
-            }
-
             $template->event = $event;
             $template->registration = $registration;
 
-            $this->processConfirm($template, $model, $event, $registration, $tokens);
+            $this->processConfirm($template, $event, $registration);
         }
 
-        unset($tokens['reg_confirm_url']);
+        $template->message = implode(' ', array_unique((array) $template->message));
 
-        if (\is_array($uuid) && $registrations) {
-            $tokens['reg_cancel_url'] = $this->eventRegistration->createStatusUpdateUrlMultiple($registrations, EventRegistrationCancelController::ACTION);
-        }
-        dd($tokens);
+        $tokens = $this->eventRegistration->getSimpleTokensForMultipleRegistrations($registrations);
+
         $template->content = function () use ($model, $tokens): string|null {
             if ($nodes = StringUtil::deserialize($model->nodes, true)) {
                 return $this->simpleTokenParser->parse(implode('', $this->nodeManager->generateMultiple($nodes)), $tokens);
@@ -99,16 +87,21 @@ class EventRegistrationConfirmController extends AbstractFrontendModuleControlle
             return null;
         };
 
+        // Send notification
+        if ($model->nc_notification) {
+            $this->notificationCenter->sendNotification($model->nc_notification, $tokens);
+        }
+
         return $template->getResponse();
     }
 
-    private function processConfirm(Template $template, ModuleModel $model, CalendarEventsModel $event, EventRegistrationModel $registration, array $tokens): void
+    private function processConfirm(Template $template, CalendarEventsModel $event, EventRegistrationModel $registration): void
     {
         // Check if already confirmed
         if ($registration->confirmed) {
             $template->class .= ' already-confirmed';
             $template->alreadyConfirmed = true;
-            $template->message = $this->translator->trans('already_confirmed', [], 'im_contao_event_registration');
+            $template->message = array_merge($template->message, [$this->translator->trans('already_confirmed', [], 'im_contao_event_registration')]);
 
             return;
         }
@@ -117,7 +110,7 @@ class EventRegistrationConfirmController extends AbstractFrontendModuleControlle
         if ($registration->cancelled) {
             $template->class .= ' already-cancelled';
             $template->alreadyCancelled = true;
-            $template->message = $this->translator->trans('already_cancelled', [], 'im_contao_event_registration');
+            $template->message = array_merge($template->message, [$this->translator->trans('already_cancelled', [], 'im_contao_event_registration')]);
 
             return;
         }
@@ -126,17 +119,12 @@ class EventRegistrationConfirmController extends AbstractFrontendModuleControlle
         if (!empty($event->reg_regEnd) && time() > $event->reg_regEnd) {
             $template->class .= ' cannot-confirm';
             $template->cannotConfirm = true;
-            $template->message = $this->translator->trans('cannot_confirm', [], 'im_contao_event_registration');
+            $template->message = array_merge($template->message, [$this->translator->trans('cannot_confirm', [], 'im_contao_event_registration')]);
 
             return;
         }
 
         $registration->confirmed = true;
         $registration->save();
-
-        // Send notification
-        if ($model->nc_notification) {
-            $this->notificationCenter->sendNotification($model->nc_notification, $tokens);
-        }
     }
 }

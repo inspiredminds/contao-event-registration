@@ -206,6 +206,73 @@ class EventRegistration
     }
 
     /**
+     * Creates a simple token array for the given registrations.
+     *
+     * @param Collection|list<EventRegistrationModel> $registrations
+     */
+    public function getSimpleTokensForMultipleRegistrations(Collection|array $registrations): array
+    {
+        $tokens = [];
+
+        Controller::loadDataContainer('tl_calendar_events');
+        $dcaFields = &$GLOBALS['TL_DCA']['tl_calendar_events']['fields'];
+
+        /** @var EventRegistrationModel $registration */
+        foreach ($registrations as $registration) {
+            if (!$event = CalendarEventsModel::findById($registration->pid)) {
+                continue;
+            }
+
+            foreach ($dcaFields as $name => $config) {
+                $value = $event->{$name};
+
+                if ($value && isset($config['eval']['rgxp']) && \in_array($config['eval']['rgxp'], ['date', 'time', 'datim'], true)) {
+                    $value = (new Date($value))->{$config['eval']['rgxp']};
+                }
+
+                $tokens['event_'.$name][] = $value;
+            }
+
+            if ($registration) {
+                Controller::loadDataContainer('tl_event_registration');
+                $dcaFields = &$GLOBALS['TL_DCA']['tl_event_registration']['fields'];
+                $data = $registration->getCombinedRow();
+
+                foreach ($data as $key => $value) {
+                    if (isset($dcaFields[$key])) {
+                        $config = &$dcaFields[$key];
+
+                        if ($value && isset($config['eval']['rgxp']) && \in_array($config['eval']['rgxp'], ['date', 'time', 'datim'], true)) {
+                            $value = (new Date($value))->{$config['eval']['rgxp']};
+                        }
+                    }
+
+                    $tokens['reg_'.$key][] = \is_array($value) ? implode(', ', $value) : $value;
+                }
+            }
+
+            $tokens['reg_count'][] = $this->getRegistrationCount($event);
+        }
+
+        // Flatten the values
+        foreach ($tokens as $k => $v) {
+            if (\is_array($v)) {
+                // Form data is usually the same. Do not collapse reg_count though.
+                if ('reg_count' !== $k && str_starts_with($k, 'reg_')) {
+                    $v = array_unique($v);
+                }
+
+                $tokens[$k] = implode(', ', $v);
+            }
+        }
+
+        $tokens['reg_confirm_url'] = $this->createStatusUpdateUrlMultiple($registrations, EventRegistrationConfirmController::ACTION);
+        $tokens['reg_cancel_url'] = $this->createStatusUpdateUrlMultiple($registrations, EventRegistrationCancelController::ACTION);
+
+        return $tokens;
+    }
+
+    /**
      * Returns the main event connected via changelanguage, if applicable.
      */
     public function getMainEvent(CalendarEventsModel $event): CalendarEventsModel

@@ -16,3 +16,6 @@ cannot_cancel: Anmeldungen für dieses Event können nicht mehr storniert werden
 header_count_title: Anmeldungen
 header_waiting_title: Warteliste
 is_waiting_list: Registrierungen zu diesem Event sind nur mehr mit Warteliste möglich.
+empty_registration_selection: Keine Events ausgewählt.
+action_confirm: Bestätigen
+action_cancel: Stornieren

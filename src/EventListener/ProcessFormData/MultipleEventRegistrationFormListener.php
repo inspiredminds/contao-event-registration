@@ -60,7 +60,8 @@ class MultipleEventRegistrationFormListener
         $lock->acquire(true);
 
         try {
-            $registrations = [];
+            $eventTitles = [];
+            $registrationUuids = [];
 
             foreach ($submittedData[$formField->name] as $eventId) {
                 if (!$event = CalendarEventsModel::findById($eventId)) {
@@ -93,29 +94,12 @@ class MultipleEventRegistrationFormListener
 
                 $registration->save();
 
-                $registrations[] = $registration;
+                $eventTitles[] = $event->title;
+                $registrationUuids[] = $registration->uuid;
             }
 
-            /*
-            $submittedData['reg_confirm_url'] = $this->eventRegistration->createStatusUpdateUrlMultiple($registrations, EventRegistrationConfirmController::ACTION);
-            $submittedData['reg_cancel_url'] = $this->eventRegistration->createStatusUpdateUrlMultiple($registrations, EventRegistrationCancelController::ACTION);
-
-            $labels['reg_confirm_url'] = $this->translator->trans('nc_tokens.event_registration.reg_confirm_url', [], 'contao_nc_tokens');
-            $labels['reg_cancel_url'] = $this->translator->trans('nc_tokens.event_registration.reg_cancel_url', [], 'contao_nc_tokens');
-            */
-
-            $submittedData[$formField->name] = implode(', ', array_map(
-                static function (EventRegistrationModel $reg): string|null {
-                    if ($event = CalendarEventsModel::findById($reg->pid)) {
-                        return $event->title;
-                    }
-
-                    return null;
-                },
-                $registrations,
-            ));
-
-            $submittedData['event_registration_uuids'] = array_map(static fn (EventRegistrationModel $reg): string => $reg->uuid, $registrations);
+            $submittedData[$formField->name] = implode(', ', $eventTitles);
+            $submittedData['event_registration_uuids'] = $registrationUuids;
 
             $t = EventRegistrationModel::getTable();
             $labels['event_registration_uuids'] = $this->translator->trans($t.'.uuid.0', [], 'contao_'.$t);

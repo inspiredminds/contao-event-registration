@@ -1,14 +1,10 @@
-<?php
 
-use Contao\StringUtil;
-
-?>
 <table class="calendar">
 <thead>
   <tr>
-    <th colspan="2" class="head previous"><?php if ($this->prevHref): ?><button type="submit" name="prev" title="<?= $this->prevTitle ?>" value="<?= StringUtil::specialcharsAttribute($this->prevHref) ?>"><?= $this->prevLink ?></button><?php else: ?>&nbsp;<?php endif; ?></th>
+    <th colspan="2" class="head previous"><?php if ($this->prevHref): ?><button type="submit" name="prev" title="<?= $this->prevTitle ?>" value="<?= Contao\StringUtil::specialcharsAttribute($this->prevHref) ?>"><?= $this->prevLink ?></button><?php else: ?>&nbsp;<?php endif; ?></th>
     <th colspan="3" class="head current"><?= $this->current ?></th>
-    <th colspan="2" class="head next"><?php if ($this->nextHref): ?><button type="submit" name="next" title="<?= $this->nextTitle ?>" value="<?= StringUtil::specialcharsAttribute($this->nextHref) ?>"><?= $this->nextLink ?></a><?php else: ?>&nbsp;<?php endif; ?></th>
+    <th colspan="2" class="head next"><?php if ($this->nextHref): ?><button type="submit" name="next" title="<?= $this->nextTitle ?>" value="<?= Contao\StringUtil::specialcharsAttribute($this->nextHref) ?>"><?= $this->nextLink ?></a><?php else: ?>&nbsp;<?php endif; ?></th>
   </tr>
   <tr>
     <?php foreach ($this->days as $day): ?>
