@@ -17,5 +17,5 @@ $GLOBALS['TL_LANG']['FMD'][EventRegistrationFormController::TYPE] = ['Event-Regi
 $GLOBALS['TL_LANG']['FMD'][EventRegistrationConfirmController::TYPE] = ['Event-Registrierungsbestätigung', 'Modul zur Verarbeitung der Bestätigung einer Registrierung zu einem Event.'];
 $GLOBALS['TL_LANG']['FMD'][EventRegistrationCancelController::TYPE] = ['Event-Registrierungsstornierung', 'Modul zur Verarbeitung der Stornierung einer Registrierung zu einem Event.'];
 $GLOBALS['TL_LANG']['FMD'][EventRegistrationListController::TYPE] = ['Event-Registrierungsliste', 'Zeigt eine Liste aller Registrierungen des aktuellen Events.'];
-$GLOBALS['TL_LANG']['FMD'][EventRegistrationCalendarController::TYPE] = ['Event-Registrierungskalener', 'Stellt eine Kalenderansicht zur Verfügung, in der man sich direkt zu mehreren Events anmelden kann.'];
+$GLOBALS['TL_LANG']['FMD'][EventRegistrationCalendarController::TYPE] = ['Event-Registrierungskalender', 'Stellt eine Kalenderansicht zur Verfügung, in der man sich direkt zu mehreren Events anmelden kann.'];
 $GLOBALS['TL_LANG']['FMD'][MemberEventRegistrationsController::TYPE] = ['Event registrations', 'Lists current registrations for a member.'];
