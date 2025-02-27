@@ -12,7 +12,7 @@ Contao extension to allow registration for events.
 
 ## Documentation
 
-  ![EN](documentation/en.png) [English Handbook](documentation/english.md)
+  ![EN](documentation/en.png) [English manual](documentation/english.md)
   
   ![DE](documentation/de.png) [Deutsches Handbuch](documentation/german.md)
 
