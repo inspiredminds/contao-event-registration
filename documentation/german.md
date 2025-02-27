@@ -98,6 +98,12 @@ Die Übersicht bietet Ihnen außerdem die Möglichkeit, die Registrierungen als 
 
 Die Event-Registrierungsliste im Backend (sowie im Frontend-Modul) verwendet standardmäßig die Felder `firstname` und `lastname`. Wenn Ihr Event-Registrierungsformular diese Felder jedoch nicht hat, möchten Sie möglicherweise die DCA-Konfiguration anpassen, damit im Backend eine Ihren Anforderungen entsprechende Beschriftung angezeigt wird. Wenn Ihr Formular beispielsweise die Felder und verwendet `vorname`, können Sie die Backend-Beschriftungen wie folgt konfigurieren: `nachname` `email`
 
+````
+// contao/dca/tl_event_registration.php
+$GLOBALS['TL_DCA']['tl_event_registration']['list']['label']['fields'] = ['vorname', 'nachname', 'email'];
+$GLOBALS['TL_DCA']['tl_event_registration']['list']['label']['format'] = '%s %s (%s)';
+````
+
 Beachten Sie, dass dies auch Auswirkungen auf die Standardbeschriftungen des Front-End-Moduls der Veranstaltungsregistrierungsliste hat .
 
 ## Benutzerdefinierte Teilnehmerzahl
