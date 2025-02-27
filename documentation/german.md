@@ -1,3 +1,8 @@
+## To-do
+
+- [ ] Bilder hinzufügen
+- [ ] Textformatierungen überprüfen
+
 # Contao Event Registrierung
 
 Diese Contao Erweiterung ermöglicht die Registrerung (Buchung) von Events.
@@ -131,7 +136,7 @@ Ein ausgewähltes Ereignisformularfeld , welches die Auswahl in einem Formular d
 
 Wenn Sie diese Seite im Frontend aufrufen, siehst du bei den einzelnen Events, für die die Anmeldung aktiviert ist, Checkboxen. Du kannst auch zwischen den Monaten wechseln – die vorherige Auswahl bleibt dabei erhalten. Sobald du auf „Weiter“ klickst, wirst du zum Anmeldeformular weitergeleitet, wo dir eine Liste der Events angezeigt wird, die für diese Anmeldung ausgewählt wurden.
 
-Nach dem Absenden des Registrierungsformulars wird die Benachrichtigung des Formulars wie gewohnt gesendet. Wenn ##reg_confirm_url##Ihre Benachrichtigung ein Token enthielt, bestätigt die Bestätigungs-URL automatisch die Registrierungen für alle ausgewählten Veranstaltungen.
+Nach dem Absenden des Registrierungsformulars wird die Benachrichtigung des Formulars wie gewohnt gesendet. Wenn `##reg_confirm_url##` Ihre Benachrichtigung ein Token enthielt, bestätigt die Bestätigungs-URL automatisch die Registrierungen für alle ausgewählten Veranstaltungen.
 
 ## Mitglieder-Registrierungsliste
 
