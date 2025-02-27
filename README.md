@@ -4,14 +4,15 @@
 Contao Event Registration
 =========================
 
-Contao extension to allow registration for events. After installation you will have the possibility to enable registration for individual events in the event's settings.
+Contao extension to allow registration for events. 
 
 ## Features
 
 <ul>
+  <li>After installation you will have the possibility to enable registration for individual events in the event's settings.</li>
+  <li>Show registrations: List registrations for individual events in the backend</li>
   <li>Supports the terminal42/contao-notification_center (https://github.com/terminal42/contao-notification_center)</li>
   <li>This extensions supports terminal42/contao-changelanguage (https://github.com/terminal42/contao-changelanguage)</li>
-  <li>Show registrations: List registrations for individual events in the backend</li>
   <li>Export registrations: Allows you to export registrations as CSV</li>
   <li>Supports custom number of participants.</li>
   <li>Waiting list with notification</li>
