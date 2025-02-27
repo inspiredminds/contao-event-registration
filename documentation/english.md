@@ -127,3 +127,31 @@ Be advised that this also affects the default labels of the _Event registration 
 ## User Defined Amount
 
 By default each registration assumes the amount of 1 person for said registration. However it is also possible to allow the visitor who registers for an event to define the number of people for that registration. In order to do this insert a new text form field into the form (preferably with a numeric validation) with the field name `amount`. This will then override the default amount and the total amount of registrations will increase by this amount as well.
+
+## Multiple Registrations
+
+Starting with version `2.2.0` you can also allow visitors to register for multiple events at once. For this there now two new features:
+
+<ul>
+  <li>An Event registration calendar front end module which renders a normal calendar (just like the regular calendar) module with a checkbox for each event in the calendar.</li>
+  <li>A Selected event form field, which will display and later process the selection in a form of the form generator.</li>
+</ul>
+
+**Overall the following needs to be done to use this feature:**
+
+<ol>
+<li>Create a new notifiction which will be used for the registration of multiple events (the tokens are the same).</li>
+<li>Create a new form which will be used for the registration of multiple events.<li>
+<li>In this form insert a Selected event form field.</li>
+<li>Also select the appropriate notification.</li>
+<li>Create a new page where you insert the new registration form (alternatively you could also insert it on the same page as the calendar).</li>
+<li>Create a new Event registration calendar module and select the previously created page as the redirect page (or none).</li>
+<li>Insert this module into a new page.</li>
+</ol>
+  
+If you visit that page in the front end, you will see checkboxes for each event for which the registration is enabled. You can also switch between months - the previous selection will be stored. Once you click on "Continue" you will be redirected to the registration form, where you will see a list of events that were selected for this registration.
+
+After submitting the registration form, the form's notification will be sent as normal. If you had a `##reg_confirm_url##` token in your notification, the confirm URL will automatically confirm the registrations for all the selected events.
+
+### Member Registration List
+In addition to the aforementioned features, there is also a new Event registrations front end module in the User section. This module will list all event registrations of the currently logged in front end user. It will also show links to Confirm (if applicable) or Cancel the registration.
