@@ -24,12 +24,10 @@ Contao extension to allow registration for events.
 ## Documentation
 
   ![EN](documentation/en.png) [English manual](documentation/english.md)
-  *image_caption*
   
   ![DE](documentation/de.png) [Deutsches Handbuch](documentation/german.md)
 
-## Screenshots Frontend
-(The following screenshots are examples.)
+## Examples
 
 | *Event calendar with yoga courses.* |
 |:--:| 
@@ -43,7 +41,7 @@ Contao extension to allow registration for events.
 
 | *Booking form with selected courses.* |
 |:--:| 
-| ![Buchungsformular mit ausgewählten Kursen](documentation/images/kurskalender-mit-auswahl.png) | 
+| ![Buchungsformular mit ausgewählten Kursen](documentation/images/multi-booking-form.png) | 
 
 
 
