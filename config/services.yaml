@@ -17,6 +17,9 @@ services:
     InspiredMinds\ContaoEventRegistration\:
         resource: ../src/
         exclude: ../src/{Config,ContaoManager,DependencyInjection,Exception,Model,FormField,ContaoEventRegistrationBundle.php,NotificationTypes.php}
+
+    InspiredMinds\ContaoEventRegistration\EventsModuleProxy:
+        public: true
     
     InspiredMinds\ContaoEventRegistration\EventRegistration:
         public: true

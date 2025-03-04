@@ -12,6 +12,7 @@ use Contao\CalendarEventsModel;
 use Contao\System;
 use Contao\Widget;
 use InspiredMinds\ContaoEventRegistration\EventRegistration;
+use InspiredMinds\ContaoEventRegistration\EventsModuleProxy;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class EventRegistrationFormField extends Widget
@@ -37,6 +38,8 @@ class EventRegistrationFormField extends Widget
         $eventRegistration = $container->get(EventRegistration::class);
         /** @var RequestStack $requestStack */
         $requestStack = $container->get('request_stack');
+        /** @var EventsModuleProxy $eventsModuleProxy */
+        $eventsModuleProxy = $container->get(EventsModuleProxy::class);
         $events = [];
 
         foreach ($requestStack->getCurrentRequest()?->query->all('event') ?? [] as $eventId) {
@@ -48,7 +51,7 @@ class EventRegistrationFormField extends Widget
                 continue;
             }
 
-            $events[] = $event;
+            $events[] = $eventsModuleProxy->getProcessedEvent($event);
         }
 
         return parent::parse(array_merge($attributes ?? [], ['events' => $events]));
