@@ -14,6 +14,8 @@ $GLOBALS['TL_DCA']['tl_event_registration'] = [
         'dataContainer' => DC_Table::class,
         'ptable' => 'tl_calendar_events',
         'closed' => true,
+        'notSortable' => true,
+        'notCopyable' => true,
         'doNotCopyRecords' => true,
         'sql' => [
             'keys' => [
@@ -102,6 +104,11 @@ $GLOBALS['TL_DCA']['tl_event_registration'] = [
                 'route' => EventRegistrationExportController::class,
                 'class' => 'event_registration_export',
                 'icons' => 'iconCSV.svg',
+            ],
+            'all' => [
+                'href' => 'act=select',
+                'class' => 'header_edit_all',
+                'attributes' => 'onclick="Backend.getScrollOffset()" accesskey="e"',
             ],
         ],
         'operations' => [
