@@ -29,7 +29,7 @@ class EventsModuleProxy extends Events
 
         $time = time();
 
-        $this->addEvent($event, $time, $time, $time, PHP_INT_MAX, (int) $event->pid);
+        $this->addEvent($event, $event->startTime, $event->endTime, $time, PHP_INT_MAX, (int) $event->pid);
 
         $processedEvent = end(end(end($this->arrEvents)));
 
