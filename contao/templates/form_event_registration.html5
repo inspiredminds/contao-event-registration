@@ -25,7 +25,7 @@
       <?php foreach ($this->events as $event): ?>
         <li>
           <?php if ($event['hasDetails']): ?>
-            <a href="<?= $event['href'] ?>"<?= $event['target'] ?>><?= $event['title'] ?> (<?php if ($event['day']): ?><?= $event['day'] ?>, <?php endif; ?><?= $event['date'] ?><?php if ($event['time']): ?> <?= $event['time'] ?><?php endif; ?>)</a></h2>
+            <a href="<?= $event['href'] ?>"<?= $event['target'] ?>><?= $event['title'] ?> (<?php if ($event['day']): ?><?= $event['day'] ?>, <?php endif; ?><?= $event['date'] ?><?php if ($event['time']): ?> <?= $event['time'] ?><?php endif; ?>)</a>
           <?php else: ?>
             <?= $event['title'] ?>
           <?php endif; ?>
