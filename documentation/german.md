@@ -11,7 +11,7 @@ Diese Contao Erweiterung ermöglicht die Registrerung (Buchung) von Events.
 
 Nach der Installation können (einzelne) Events zur Registrierung (Buchung) freigegeben werden. Die Aktivierung wird in den Einstellungen des Events vorgenommen.
 
-![Registrierung erlauben](images/registrierung-erlauben.png)
+![Registrierung erlauben](images/event-registrierung-erlauben.png)
 
 <ul>
   <li>Registrierungsformular: Wählen Sie aus dem Formulargenerator ein Formular aus, welches für die Registrierung verwendet werden soll. Alle Daten des Formulars werden bei jeder Registrierung gespeichert. Das Formular wird wie gewohnt verarbeitet, d.h. es werden auch Benachrichtigungsmails versendet.</li>
@@ -35,9 +35,8 @@ Nach der Installation können (einzelne) Events zur Registrierung (Buchung) frei
   <li>Veranstaltungsregistrierungsliste</li>
 </ul>
 
-Alle diese Module sind optional.  
 > [!IMPORTANT]
-> Das Veranstaltungsregistrierungsformular muss auf derselben Seite wie das Veranstaltungslesermodul eingefügt werden und zeigt das Veranstaltungsregistrierungsformular an, wenn für die Veranstaltung die Registrierung aktiviert ist. Alternativ ist dieses Formular auch als Vorlagenvariable in Veranstaltungsvorlagen verfügbar.
+> Alle diese Module sind optional. Das Veranstaltungsregistrierungsformular muss auf derselben Seite wie das Veranstaltungslesermodul eingefügt werden und zeigt das Veranstaltungsregistrierungsformular an, wenn für die Veranstaltung die Registrierung aktiviert ist. Alternativ ist dieses Formular auch als Vorlagenvariable in Veranstaltungsvorlagen verfügbar.
 
 Die Bestätigungs- und Stornierungsformulare können auf anderen Seiten eingefügt werden. In diesem Fall müssen Sie diese Seiten auch in den Einstellungen des Kalenders angeben. Andernfalls wird davon ausgegangen, dass diese Module auch auf der Veranstaltungsleserseite vorhanden sind. Die Module ermöglichen es Ihnen, einen Knoten für detaillierte Inhalte zu definieren. Dieser Inhalt wird angezeigt, wenn eine Veranstaltungsregistrierung erfolgreich bestätigt oder storniert wurde. Sie können auch eine Benachrichtigung auswählen, die nach erfolgreicher Stornierung oder Bestätigung gesendet wird. Wenn Sie weder die Bestätigungs- noch die Stornierungsfunktion benötigen, müssen diese Module nicht erstellt werden.
 
@@ -103,7 +102,7 @@ Die Übersicht bietet Ihnen außerdem die Möglichkeit, die Registrierungen als 
 
 Die Event-Registrierungsliste im Backend (sowie im Frontend-Modul) verwendet standardmäßig die Felder `firstname` und `lastname`. Wenn Ihr Event-Registrierungsformular diese Felder jedoch nicht hat, möchten Sie möglicherweise die DCA-Konfiguration anpassen, damit im Backend eine Ihren Anforderungen entsprechende Beschriftung angezeigt wird. Wenn Ihr Formular beispielsweise die Felder und verwendet `vorname`, können Sie die Backend-Beschriftungen wie folgt konfigurieren: `nachname` `email`
 
-````
+````sql
 // contao/dca/tl_event_registration.php
 $GLOBALS['TL_DCA']['tl_event_registration']['list']['label']['fields'] = ['vorname', 'nachname', 'email'];
 $GLOBALS['TL_DCA']['tl_event_registration']['list']['label']['format'] = '%s %s (%s)';
@@ -140,4 +139,4 @@ Nach dem Absenden des Registrierungsformulars wird die Benachrichtigung des Form
 
 ## Mitglieder-Registrierungsliste
 
-Zusätzlich zu den oben genannten Funktionen gibt es im Benutzerbereich auch ein neues Frontend-Modul für Veranstaltungsregistrierungen . Dieses Modul listet alle Veranstaltungsregistrierungen des aktuell angemeldeten Frontend-Benutzers auf. Es zeigt auch Links zum Bestätigen (falls zutreffend) oder Abbrechen der Registrierung an.
+Zusätzlich zu den oben genannten Funktionen gibt es im Benutzerbereich auch ein neues Frontend-Modul für Veranstaltungsregistrierungen. Dieses Modul listet alle Veranstaltungsregistrierungen des aktuell angemeldeten Frontend-Benutzers auf. Es zeigt auch Links zum Bestätigen (falls zutreffend) oder Abbrechen der Registrierung an.

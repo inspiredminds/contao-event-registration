@@ -32,7 +32,8 @@ The extension provides three new event modules:
 - Event registration cancellation
 - Event registration list
 
-All of these modules are optional. The _Event registration form_ will need to be inserted on the same page as the event reader module and it will display the event registration form, if the event has registration enabled. Alternatively this form is also available as [template variables](#template-variables) within event templates.
+> [!IMPORTANT]
+> All of these modules are optional. The _Event registration form_ will need to be inserted on the same page as the event reader module and it will display the event registration form, if the event has registration enabled. Alternatively this form is also available as [template variables](#template-variables) within event templates.
 
 The confirmation and cancellation forms can be inserted on other pages. In that case you also need to specify those pages in the settings of the calendar. Otherwise it is assumed that those modules are also present on the event reader page. The modules allow you to define a _node_ for detailed content. This content will be displayed, when an event registration has been successfully confirmed or cancelled. You are also able to select a notification that will be sent after succesful cancellation or confirmation. If you do not need either confirmation or cancellation functionality, these modules do not need to be created.
 
