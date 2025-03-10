@@ -13,27 +13,24 @@ Nach der Installation können (einzelne) Events zur Registrierung (Buchung) frei
 
 ![Registrierung erlauben](images/event-registrierung-erlauben.png)
 
-<ul>
-  <li>Registrierungsformular: Wählen Sie aus dem Formulargenerator ein Formular aus, welches für die Registrierung verwendet werden soll. Alle Daten des Formulars werden bei jeder Registrierung gespeichert. Das Formular wird wie gewohnt verarbeitet, d.h. es werden auch Benachrichtigungsmails versendet.</li>
-  <li>Mindestteilnehmerzahl: Du kannst optional eine Mindestteilnehmerzahl festlegen, die Du dann (zusammen mit den aktuell angemeldeten Teilnehmern) im Frontend anzeigen kannst.</li>
-  <li>Maximale Teilnehmerzahl: Sie können optional eine maximale Teilnehmerzahl festlegen. Wird diese Zahl erreicht, ist eine Anmeldung nicht mehr möglich.</li>
-  <li>Ende der Registrierung: Sie können optional ein Datum festlegen, nach dem eine Registrierung nicht mehr möglich ist.</li>
-  <li>Ende der Stornierung: Sie können optional ein Datum festlegen, nach dem eine Stornierung nicht mehr möglich ist.</li>
-  <li>Bestätigung erforderlich: Wenn aktiviert, werden nur bestätigte Registrierungen zur Gesamtzahl der Registrierungen gezählt.</li>
-  <li>Warteliste aktivieren: Hält die Anmeldung auch nach Erreichen der maximalen Teilnehmerzahl offen. Alle Anmeldungen landen auf einer Warteliste und werden automatisch weiterverfolgt, wenn vorherige Anmeldungen storniert werden.</li>
-  <li>Benachrichtigung über Vorrücken von der Warteliste: Diese Benachrichtigung wird gesendet, wenn ein Teilnehmer von der Warteliste vorrückt.</li>
-</ul>
+
+- Registrierungsformular: Wählen Sie aus dem Formulargenerator ein Formular aus, welches für die Registrierung verwendet werden soll. Alle Daten des Formulars werden bei jeder Registrierung gespeichert. Das Formular wird wie gewohnt verarbeitet, d.h. es werden auch Benachrichtigungsmails versendet.
+- Mindestteilnehmerzahl: Du kannst optional eine Mindestteilnehmerzahl festlegen, die Du dann (zusammen mit den aktuell angemeldeten Teilnehmern) im Frontend anzeigen kannst.
+- Maximale Teilnehmerzahl: Sie können optional eine maximale Teilnehmerzahl festlegen. Wird diese Zahl erreicht, ist eine Anmeldung nicht mehr möglich.
+- Ende der Registrierung: Sie können optional ein Datum festlegen, nach dem eine Registrierung nicht mehr möglich ist.
+- Ende der Stornierung: Sie können optional ein Datum festlegen, nach dem eine Stornierung nicht mehr möglich ist.
+- Bestätigung erforderlich: Wenn aktiviert, werden nur bestätigte Registrierungen zur Gesamtzahl der Registrierungen gezählt.
+- Warteliste aktivieren: Hält die Anmeldung auch nach Erreichen der maximalen Teilnehmerzahl offen. Alle Anmeldungen landen auf einer Warteliste und werden automatisch weiterverfolgt, wenn vorherige Anmeldungen storniert werden.
+- Benachrichtigung über Vorrücken von der Warteliste: Diese Benachrichtigung wird gesendet, wenn ein Teilnehmer von der Warteliste vorrückt.
 
 ## Module
 
 **Die Erweiterung stellt drei neue Event-Module zur Verfügung:**
 
-<ul>
-  <li>Anmeldeformular für die Veranstaltung</li>
-  <li>Bestätigung der Veranstaltungsregistrierung</li>
-  <li>Stornierung der Veranstaltungsregistrierung</li>
-  <li>Veranstaltungsregistrierungsliste</li>
-</ul>
+- Anmeldeformular für die Veranstaltung</li>
+- Bestätigung der Veranstaltungsregistrierung</li>
+- Stornierung der Veranstaltungsregistrierung</li>
+- Veranstaltungsregistrierungsliste</li>
 
 > [!IMPORTANT]
 > Alle diese Module sind optional. Das Veranstaltungsregistrierungsformular muss auf derselben Seite wie das Veranstaltungslesermodul eingefügt werden und zeigt das Veranstaltungsregistrierungsformular an, wenn für die Veranstaltung die Registrierung aktiviert ist. Alternativ ist dieses Formular auch als Vorlagenvariable in Veranstaltungsvorlagen verfügbar.
@@ -123,15 +120,15 @@ Ein Front-End-Modul für den Veranstaltungsregistrierungskalender , das ein norm
 Ein ausgewähltes Ereignisformularfeld , welches die Auswahl in einem Formular des Formulargenerators anzeigt und später verarbeitet.
 
 **Insgesamt muss Folgendes getan werden, um diese Funktion zu nutzen:**
-<ol>
-  <li>Erstellen Sie eine neue Benachrichtigung, die für die Registrierung mehrerer Ereignisse verwendet wird (die Token sind dieselben).</li>
-  <li>Erstellen Sie ein neues Formular, das für die Registrierung mehrerer Veranstaltungen verwendet wird.</li>
-  <li>Fügen Sie in dieses Formular ein ausgewähltes Ereignisformularfeld ein .</li>
-  <li>Wählen Sie außerdem die entsprechende Benachrichtigung aus.</li>
-  <li>Erstellen Sie eine neue Seite, auf der Sie das neue Anmeldeformular einfügen (alternativ können Sie es auch auf derselben Seite wie den Kalender einfügen).</li>
-  <li>Erstellen Sie ein neues Kalendermodul zur Veranstaltungsregistrierung und wählen Sie die zuvor erstellte Seite als Weiterleitungsseite aus (oder keine).</li>
-  <li>Fügen Sie dieses Modul in eine neue Seite ein.</li>
-</ol>
+
+1. Erstellen Sie eine neue Benachrichtigung, die für die Registrierung mehrerer Ereignisse verwendet wird (die Token sind dieselben).</li>
+2. Erstellen Sie ein neues Formular, das für die Registrierung mehrerer Veranstaltungen verwendet wird.</li>
+3. Fügen Sie in dieses Formular ein ausgewähltes Ereignisformularfeld ein .</li>
+4. Wählen Sie außerdem die entsprechende Benachrichtigung aus.</li>
+5. Erstellen Sie eine neue Seite, auf der Sie das neue Anmeldeformular einfügen (alternativ können Sie es auch auf derselben Seite wie den Kalender einfügen).</li>
+6. Erstellen Sie ein neues Kalendermodul zur Veranstaltungsregistrierung und wählen Sie die zuvor erstellte Seite als Weiterleitungsseite aus (oder keine).</li>
+7. Fügen Sie dieses Modul in eine neue Seite ein.</li>
+
 
 Wenn Sie diese Seite im Frontend aufrufen, siehst du bei den einzelnen Events, für die die Anmeldung aktiviert ist, Checkboxen. Du kannst auch zwischen den Monaten wechseln – die vorherige Auswahl bleibt dabei erhalten. Sobald du auf „Weiter“ klickst, wirst du zum Anmeldeformular weitergeleitet, wo dir eine Liste der Events angezeigt wird, die für diese Anmeldung ausgewählt wurden.
 
