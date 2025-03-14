@@ -131,11 +131,11 @@ By default each registration assumes the amount of 1 person for said registratio
 
 ## Multiple Registrations
 
-Starting with version `2.2.0` you can also allow visitors to register for multiple events at once. For this there now
-two new features:
+Starting with version `2.2.0` you can also allow visitors to register for multiple events at once. For this there are
+now two new features:
 
-* An _Event registration calendar_ front end module which renders a normal calendar (just like the regular calendar)
-  module with a checkbox for each event in the calendar.
+* An _Event registration calendar_ front end module which renders a normal calendar module  (just like the regular
+  calendar) with a checkbox for each event in the calendar.
 * A _Selected event_ form field, which will display and later process the selection in a form of the form generator.
 
 Overall the following needs to be done to use this feature:
