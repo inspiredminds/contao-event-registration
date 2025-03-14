@@ -11,13 +11,13 @@ namespace InspiredMinds\ContaoEventRegistration\Controller\FrontendModule;
 use Contao\CalendarEventsModel;
 use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsFrontendModule;
-use Contao\Events;
 use Contao\FrontendUser;
 use Contao\ModuleModel;
 use Contao\Template;
 use Doctrine\DBAL\Connection;
 use InspiredMinds\ContaoEventRegistration\EventRegistration;
 use InspiredMinds\ContaoEventRegistration\EventRegistration\LabelBuilder;
+use InspiredMinds\ContaoEventRegistration\EventsModuleProxy;
 use InspiredMinds\ContaoEventRegistration\Model\EventRegistrationModel;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,6 +36,7 @@ class MemberEventRegistrationsController extends AbstractFrontendModuleControlle
         private readonly EventRegistration $eventRegistration,
         private readonly LabelBuilder $labelBuilder,
         private readonly Connection $db,
+        private readonly EventsModuleProxy $eventsModuleProxy,
     ) {
     }
 
@@ -71,8 +72,7 @@ class MemberEventRegistrationsController extends AbstractFrontendModuleControlle
 
             $registration['confirm_url'] = null;
             $registration['cancel_url'] = $this->eventRegistration->createStatusUpdateUrl($event, $model, EventRegistrationCancelController::ACTION);
-            $registration['event'] = $event->row();
-            $registration['event_url'] = Events::generateEventUrl($event);
+            $registration['event'] = $this->eventsModuleProxy->getProcessedEvent($event, $model->created);
 
             if (!$model->confirmed && $this->eventRegistration->getMainEvent($event)->reg_requireConfirm) {
                 $registration['confirm_url'] = $this->eventRegistration->createStatusUpdateUrl($event, $model, EventRegistrationConfirmController::ACTION);

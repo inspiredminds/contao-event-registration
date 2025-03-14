@@ -17,7 +17,7 @@ class EventsModuleProxy extends Events
     {
     }
 
-    public function getProcessedEvent(CalendarEventsModel|array $event): array
+    public function getProcessedEvent(CalendarEventsModel|array $event, int|null $begin = null, int|null $end = null): array
     {
         $this->arrEvents = [];
 
@@ -27,9 +27,7 @@ class EventsModuleProxy extends Events
             }
         }
 
-        $time = time();
-
-        $this->addEvent($event, $event->startTime, $event->endTime, $time, PHP_INT_MAX, (int) $event->pid);
+        $this->addEvent($event, $event->startTime, $event->endTime, $begin ?? time(), $end ?? PHP_INT_MAX, (int) $event->pid);
 
         $processedEvent = end(end(end($this->arrEvents)));
 
