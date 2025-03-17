@@ -36,6 +36,7 @@ class EventRegistration
 
     public function __construct(
         private readonly Connection $db,
+        private readonly EventsModuleProxy $eventsModuleProxy,
         private array $bundles,
     ) {
     }
@@ -219,46 +220,48 @@ class EventRegistration
                 continue;
             }
 
-            foreach ($dcaFields as $name => $config) {
-                $value = $event->{$name};
+            $e = $this->eventsModuleProxy->getProcessedEvent($event);
 
-                if ($value && isset($config['eval']['rgxp']) && \in_array($config['eval']['rgxp'], ['date', 'time', 'datim'], true)) {
-                    $value = (new Date($value))->{$config['eval']['rgxp']};
-                }
-
-                $tokens['event_'.$name][] = $value;
+            foreach ($e as $key => $value) {
+                $tokens['event_'.$key][] = $value;
             }
 
-            if ($registration) {
-                Controller::loadDataContainer('tl_event_registration');
-                $dcaFields = &$GLOBALS['TL_DCA']['tl_event_registration']['fields'];
-                $data = $registration->getCombinedRow();
+            $tokens['event_dateTitle'][] = $e['title'].' ('.($e['day'] ? $e['day'].', ' : '').$e['date'].($e['time'] ? ' '.$e['time'] : '').')';
 
-                foreach ($data as $key => $value) {
-                    if (isset($dcaFields[$key])) {
-                        $config = &$dcaFields[$key];
+            Controller::loadDataContainer('tl_event_registration');
+            $dcaFields = &$GLOBALS['TL_DCA']['tl_event_registration']['fields'];
+            $data = $registration->getCombinedRow();
 
-                        if ($value && isset($config['eval']['rgxp']) && \in_array($config['eval']['rgxp'], ['date', 'time', 'datim'], true)) {
-                            $value = (new Date($value))->{$config['eval']['rgxp']};
-                        }
+            foreach ($data as $key => $value) {
+                if (isset($dcaFields[$key])) {
+                    $config = &$dcaFields[$key];
+
+                    if ($value && isset($config['eval']['rgxp']) && \in_array($config['eval']['rgxp'], ['date', 'time', 'datim'], true)) {
+                        $value = (new Date($value))->{$config['eval']['rgxp']};
                     }
-
-                    $tokens['reg_'.$key][] = \is_array($value) ? implode(', ', $value) : $value;
                 }
+
+                $tokens['reg_'.$key][] = \is_array($value) ? implode(', ', $value) : $value;
             }
 
             $tokens['reg_count'][] = $this->getRegistrationCount($event);
         }
 
         // Flatten the values
-        foreach ($tokens as $k => $v) {
-            if (\is_array($v)) {
-                // Form data is usually the same. Do not collapse reg_count though.
-                if ('reg_count' !== $k && str_starts_with($k, 'reg_')) {
-                    $v = array_unique($v);
-                }
+        foreach ($tokens as $k => $value) {
+            \assert(\is_array($value));
 
-                $tokens[$k] = implode(', ', $v);
+            $value = array_filter($value, static fn (mixed $v): bool => \is_scalar($v));
+
+            // Form data is usually the same. Do not collapse reg_count though.
+            if ('reg_count' !== $k && str_starts_with($k, 'reg_')) {
+                $value = array_unique($value);
+            }
+
+            if (!array_filter($value)) {
+                $tokens[$k] = '';
+            } else {
+                $tokens[$k] = implode(', ', $value);
             }
         }
 
