@@ -1,0 +1,38 @@
+<?php $this->extend('form_row'); ?>
+
+<?php $this->block('label'); ?>
+  <?php if ($this->label): ?>
+    <label<?php if ($this->class): ?> class="<?= $this->class ?>"<?php endif; ?>>
+      <?php if ($this->mandatory): ?>
+        <span class="invisible"><?= $this->mandatoryField ?> </span><?= $this->label ?><span class="mandatory">*</span>
+      <?php else: ?>
+        <?= $this->label ?>
+      <?php endif; ?>
+    </label>
+  <?php endif; ?>
+<?php $this->endblock(); ?>
+
+<?php $this->block('field'); ?>
+  <?php if ($this->hasErrors()): ?>
+    <p class="error"><?= $this->getErrorAsString() ?></p>
+  <?php endif; ?>
+
+  <?php if ($this->events): ?>
+    <?php foreach ($this->events ?? [] as $event): ?>
+      <input type="hidden" name="<?= $this->name ?>[]" value="<?= $event['id'] ?>">
+    <?php endforeach; ?>
+    <ul>
+      <?php foreach ($this->events as $event): ?>
+        <li>
+          <?php if ($event['hasDetails']): ?>
+            <a href="<?= $event['href'] ?>"<?= $event['target'] ?>><?= $event['title'] ?> (<?php if ($event['day']): ?><?= $event['day'] ?>, <?php endif; ?><?= $event['date'] ?><?php if ($event['time']): ?> <?= $event['time'] ?><?php endif; ?>)</a>
+          <?php else: ?>
+            <?= $event['title'] ?>
+          <?php endif; ?>
+        </li>
+      <?php endforeach; ?>
+    </ul>
+  <?php else: ?>
+    <span><?= Contao\System::getContainer()->get('translator')->trans('empty_registration_selection', [], 'im_contao_event_registration'); ?></span>
+  <?php endif; ?>
+<?php $this->endblock(); ?>

@@ -50,28 +50,37 @@ class EventRegistrationCancelController extends AbstractFrontendModuleController
 
     protected function getResponse(Template $template, ModuleModel $model, Request $request): Response
     {
-        $uuid = $request->query->get('uuid');
+        $uuids = $request->query->all()['uuid'] ?? null;
         $action = $request->query->get('action');
 
         if (self::ACTION !== $action) {
             return new Response();
         }
 
-        if (empty($uuid)) {
+        if (empty($uuids)) {
             throw new PageNotFoundException('No UUID given.');
         }
 
-        $registration = EventRegistrationModel::findOneByUuid($uuid);
+        $registrations = [];
+        $template->message = [];
 
-        if (null === $registration) {
-            throw new PageNotFoundException('No registration found.');
+        foreach ((array) $uuids as $uuid) {
+            if (!$registration = EventRegistrationModel::findOneByUuid($uuid)) {
+                throw new PageNotFoundException('No registration found.');
+            }
+
+            $registrations[] = $registration;
+            $event = CalendarEventsModel::findById((int) $registration->pid);
+            $template->event = $event;
+            $template->registration = $registration;
+
+            $this->processCancel($template, $event, $registration);
         }
 
-        $event = CalendarEventsModel::findById((int) $registration->pid);
-        $tokens = $this->eventRegistration->getSimpleTokens($event, $registration);
+        $template->message = implode(' ', array_unique((array) $template->message));
 
-        $template->event = $event;
-        $template->registration = $registration;
+        $tokens = $this->eventRegistration->getSimpleTokensForMultipleRegistrations($registrations);
+
         $template->content = function () use ($model, $tokens): string|null {
             if ($nodes = StringUtil::deserialize($model->nodes, true)) {
                 return $this->simpleTokenParser->parse(implode('', $this->nodeManager->generateMultiple($nodes)), $tokens);
@@ -80,18 +89,24 @@ class EventRegistrationCancelController extends AbstractFrontendModuleController
             return null;
         };
 
-        $this->processCancel($template, $model, $event, $registration, $tokens);
+        // Send notification
+        if ($model->nc_notification) {
+            $this->notificationCenter->sendNotification($model->nc_notification, $tokens);
+        }
+
+        // Process waiting lists
+        ($this->waitingListChecker)($event);
 
         return $template->getResponse();
     }
 
-    private function processCancel(Template $template, ModuleModel $model, CalendarEventsModel $event, EventRegistrationModel $registration, array $tokens): void
+    private function processCancel(Template $template, CalendarEventsModel $event, EventRegistrationModel $registration): void
     {
         // Check if already cancelled
         if ($registration->cancelled) {
             $template->class .= ' already-cancelled';
             $template->alreadyCancelled = true;
-            $template->message = $this->translator->trans('already_cancelled', [], 'im_contao_event_registration');
+            $template->message = array_merge($template->message, [$this->translator->trans('already_cancelled', [], 'im_contao_event_registration')]);
 
             return;
         }
@@ -100,20 +115,12 @@ class EventRegistrationCancelController extends AbstractFrontendModuleController
         if (!empty($event->reg_cancelEnd) && time() > $event->reg_cancelEnd) {
             $template->class .= ' cannot-cancel';
             $template->cannotCancel = true;
-            $template->message = $this->translator->trans('cannot_cancel', [], 'im_contao_event_registration');
+            $template->message = array_merge($template->message, [$this->translator->trans('cannot_cancel', [], 'im_contao_event_registration')]);
 
             return;
         }
 
         $registration->cancelled = true;
         $registration->save();
-
-        // Send notification
-        if ($model->nc_notification) {
-            $this->notificationCenter->sendNotification($model->nc_notification, $tokens);
-        }
-
-        // Process waiting lists
-        ($this->waitingListChecker)($event);
     }
 }

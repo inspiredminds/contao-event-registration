@@ -16,3 +16,6 @@ cannot_cancel: Registrations for this event cannot be cancelled anymore.
 header_count_title: Registrations
 header_waiting_title: Waiting list
 is_waiting_list: Registrations to this event will be put on a waiting list.
+empty_registration_selection: No events selected.
+action_confirm: Confirm
+action_cancel: Cancel

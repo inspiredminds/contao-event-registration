@@ -3,11 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the Contao Event Registration extension.
- *
- * (c) inspiredminds
- *
- * @license LGPL-3.0-or-later
+ * (c) INSPIRED MINDS
  */
 
 namespace InspiredMinds\ContaoEventRegistration;
@@ -17,6 +13,7 @@ use Contao\CalendarModel;
 use Contao\Controller;
 use Contao\Date;
 use Contao\Input;
+use Contao\Model\Collection;
 use Contao\PageModel;
 use Contao\Template;
 use Doctrine\DBAL\Connection;
@@ -39,6 +36,7 @@ class EventRegistration
 
     public function __construct(
         private readonly Connection $db,
+        private readonly EventsModuleProxy $eventsModuleProxy,
         private array $bundles,
     ) {
     }
@@ -205,6 +203,75 @@ class EventRegistration
     }
 
     /**
+     * Creates a simple token array for the given registrations.
+     *
+     * @param Collection|list<EventRegistrationModel> $registrations
+     */
+    public function getSimpleTokensForMultipleRegistrations(Collection|array $registrations): array
+    {
+        $tokens = [];
+
+        Controller::loadDataContainer('tl_calendar_events');
+        $dcaFields = &$GLOBALS['TL_DCA']['tl_calendar_events']['fields'];
+
+        /** @var EventRegistrationModel $registration */
+        foreach ($registrations as $registration) {
+            if (!$event = CalendarEventsModel::findById($registration->pid)) {
+                continue;
+            }
+
+            $e = $this->eventsModuleProxy->getProcessedEvent($event);
+
+            foreach ($e as $key => $value) {
+                $tokens['event_'.$key][] = $value;
+            }
+
+            $tokens['event_dateTitle'][] = $e['title'].' ('.($e['day'] ? $e['day'].', ' : '').$e['date'].($e['time'] ? ' '.$e['time'] : '').')';
+
+            Controller::loadDataContainer('tl_event_registration');
+            $dcaFields = &$GLOBALS['TL_DCA']['tl_event_registration']['fields'];
+            $data = $registration->getCombinedRow();
+
+            foreach ($data as $key => $value) {
+                if (isset($dcaFields[$key])) {
+                    $config = &$dcaFields[$key];
+
+                    if ($value && isset($config['eval']['rgxp']) && \in_array($config['eval']['rgxp'], ['date', 'time', 'datim'], true)) {
+                        $value = (new Date($value))->{$config['eval']['rgxp']};
+                    }
+                }
+
+                $tokens['reg_'.$key][] = \is_array($value) ? implode(', ', $value) : $value;
+            }
+
+            $tokens['reg_count'][] = $this->getRegistrationCount($event);
+        }
+
+        // Flatten the values
+        foreach ($tokens as $k => $value) {
+            \assert(\is_array($value));
+
+            $value = array_filter($value, static fn (mixed $v): bool => \is_scalar($v));
+
+            // Form data is usually the same. Do not collapse reg_count though.
+            if ('reg_count' !== $k && str_starts_with($k, 'reg_')) {
+                $value = array_unique($value);
+            }
+
+            if (!array_filter($value)) {
+                $tokens[$k] = '';
+            } else {
+                $tokens[$k] = implode(', ', $value);
+            }
+        }
+
+        $tokens['reg_confirm_url'] = $this->createStatusUpdateUrlMultiple($registrations, EventRegistrationConfirmController::ACTION);
+        $tokens['reg_cancel_url'] = $this->createStatusUpdateUrlMultiple($registrations, EventRegistrationCancelController::ACTION);
+
+        return $tokens;
+    }
+
+    /**
      * Returns the main event connected via changelanguage, if applicable.
      */
     public function getMainEvent(CalendarEventsModel $event): CalendarEventsModel
@@ -273,6 +340,62 @@ class EventRegistration
             $page = PageModel::findById($calendar->jumpTo);
 
             return $page->getAbsoluteUrl('/'.$event->alias).'?'.http_build_query($params);
+        }
+
+        return $page->getAbsoluteUrl().'?'.http_build_query($params);
+    }
+
+    /**
+     * @param Collection|list<EventRegistrationModel> $registrations
+     */
+    public function createStatusUpdateUrlMultiple(Collection|array $registrations, string $action): string
+    {
+        if (!\in_array($action, [EventRegistrationConfirmController::ACTION, EventRegistrationCancelController::ACTION], true)) {
+            throw new \InvalidArgumentException('Invalid action parameter "'.$action.'."');
+        }
+
+        if ($registrations instanceof Collection) {
+            $registrations = $registrations->getModels();
+        }
+
+        /** @var list<EventRegistrationModel> $registrations */
+        if ([] === $registrations) {
+            throw new \RuntimeException('No registrations given.');
+        }
+
+        $params = [
+            'action' => $action,
+            'uuid' => array_map(static fn (EventRegistrationModel $reg): string => $reg->uuid, $registrations),
+        ];
+
+        if (!$firstEvent = CalendarEventsModel::findById(reset($registrations)->pid)) {
+            throw new \RuntimeException('Could not load event.');
+        }
+
+        $calendar = CalendarModel::findById($firstEvent->pid);
+
+        $page = null;
+
+        switch ($action) {
+            case EventRegistrationConfirmController::ACTION:
+                if ($calendar->reg_confirm_page) {
+                    $page = PageModel::findById($calendar->reg_confirm_page);
+                }
+
+                break;
+
+            case EventRegistrationCancelController::ACTION:
+                if ($calendar->reg_cancel_page) {
+                    $page = PageModel::findById($calendar->reg_cancel_page);
+                }
+
+                break;
+        }
+
+        if (null === $page) {
+            $page = PageModel::findById($calendar->jumpTo);
+
+            return $page->getAbsoluteUrl('/'.$firstEvent->alias).'?'.http_build_query($params);
         }
 
         return $page->getAbsoluteUrl().'?'.http_build_query($params);

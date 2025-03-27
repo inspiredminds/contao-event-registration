@@ -3,11 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the Contao Event Registration extension.
- *
  * (c) INSPIRED MINDS
- *
- * @license LGPL-3.0-or-later
  */
 
 namespace InspiredMinds\ContaoEventRegistration\Model;
@@ -18,6 +14,8 @@ use Contao\Model;
  * @property int    $id
  * @property int    $pid
  * @property int    $tstamp
+ * @property string $uuid
+ * @property int    $created
  * @property int    $form
  * @property int    $member
  * @property int    $amount

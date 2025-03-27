@@ -3,11 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the Contao Event Registration extension.
- *
- * (c) inspiredminds
- *
- * @license LGPL-3.0-or-later
+ * (c) INSPIRED MINDS
  */
 
 namespace InspiredMinds\ContaoEventRegistration;
@@ -43,7 +39,7 @@ class WaitingListChecker
             // Go through all upcoming events, if no event given
             $events = $event ? [$event] : CalendarEventsModel::findUpcomingByPids(CalendarModel::findAll()?->fetchEach('id') ?? []);
 
-            foreach ($events as $event) {
+            foreach ($events ?? [] as $event) {
                 $event = $this->eventRegistration->getMainEvent($event);
 
                 // Check if waiting list is enabled at all

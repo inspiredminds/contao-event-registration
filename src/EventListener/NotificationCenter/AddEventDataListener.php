@@ -3,11 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the Contao Event Registration extension.
- *
  * (c) INSPIRED MINDS
- *
- * @license LGPL-3.0-or-later
  */
 
 namespace InspiredMinds\ContaoEventRegistration\EventListener\NotificationCenter;
@@ -19,16 +15,13 @@ use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Terminal42\NotificationCenterBundle\Config\MessageConfig;
 use Terminal42\NotificationCenterBundle\Event\CreateParcelEvent;
 use Terminal42\NotificationCenterBundle\Parcel\Stamp\TokenCollectionStamp;
-use Terminal42\NotificationCenterBundle\Token\Definition\Factory\TokenDefinitionFactoryInterface;
 use Terminal42\NotificationCenterBundle\Token\Token;
 
 #[AsEventListener]
 class AddEventDataListener
 {
-    public function __construct(
-        private readonly EventRegistration $eventRegistration,
-        private readonly TokenDefinitionFactoryInterface $factory,
-    ) {
+    public function __construct(private readonly EventRegistration $eventRegistration)
+    {
     }
 
     public function __invoke(CreateParcelEvent $createParcelEvent): void

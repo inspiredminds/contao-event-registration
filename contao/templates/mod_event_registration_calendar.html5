@@ -1,0 +1,15 @@
+<?php $this->extend('block_unsearchable'); ?>
+
+<?php $this->block('content'); ?>
+
+  <form action="<?= $this->action ?>" method="get">
+    <?php foreach ($this->selectedIds ?: [] as $id): ?>
+      <input type="hidden" name="event[]" value="<?= $id ?>">
+    <?php endforeach; ?>
+    <?= $this->calendar ?>
+    <div class="submit_container">
+      <button type="submit" name="continue"><?= $this->trans('MSC.continue') ?></button>
+    </div>
+  </form>
+
+<?php $this->endblock(); ?>

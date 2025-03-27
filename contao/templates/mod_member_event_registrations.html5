@@ -1,0 +1,22 @@
+<?php $this->extend('block_unsearchable'); ?>
+
+<?php $this->block('content'); ?>
+  <ul>
+    <?php foreach ($this->registrations as $registration): ?>
+      <?php $event = $registration['event']; ?>
+      <li>
+        <span class="event-title">
+          <?php if ($event['hasDetails']): ?>
+            <a href="<?= $event['href'] ?>"<?= $event['target'] ?>><?= $event['title'] ?> (<?php if ($event['day']): ?><?= $event['day'] ?>, <?php endif; ?><?= $event['date'] ?><?php if ($event['time']): ?> <?= $event['time'] ?><?php endif; ?>)</a>
+          <?php else: ?>
+            <?= $event['title'] ?>
+          <?php endif; ?>      
+        </span>
+        <?php if ($registration['confirm_url']): ?>
+          <span class="action-confirm"><a href="<?= Contao\StringUtil::specialcharsAttribute($registration['confirm_url']) ?>"><?= $this->trans('action_confirm', [], 'im_contao_event_registration') ?></a></span>
+        <?php endif; ?>
+        <span class="action-cancel"><a href="<?= Contao\StringUtil::specialcharsAttribute($registration['cancel_url']) ?>"><?= $this->trans('action_cancel', [], 'im_contao_event_registration') ?></a></span>
+      </li>
+    <?php endforeach; ?>
+  </ul>
+<?php $this->endblock(); ?>
