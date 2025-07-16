@@ -19,3 +19,4 @@ $GLOBALS['TL_LANG']['FMD'][EventRegistrationFormController::TYPE] = ['Event regi
 $GLOBALS['TL_LANG']['FMD'][EventRegistrationConfirmController::TYPE] = ['Event registration confirmation', 'Module handling registration confirmations.'];
 $GLOBALS['TL_LANG']['FMD'][EventRegistrationCancelController::TYPE] = ['Event registration cancellation', 'Module handling registration cancellations.'];
 $GLOBALS['TL_LANG']['FMD'][EventRegistrationListController::TYPE] = ['Event registration list', 'Lists current registrations for an event.'];
+$GLOBALS['TL_LANG']['MOD']['tl_event_registration'] = 'Registrations';
