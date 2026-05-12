@@ -79,10 +79,13 @@ Within notifications, _as well as the node content of the confirmation and cance
 
 - `##event_*##`: All variables of the event.
 - `##reg_*##`: All variables of the registration (this includes all form data).
+- `##reg_label_*##`: All labels of the form fields of the registration.
 - `##reg_amount##`: The amount of people for one registration.
 - `##reg_count##`: The respective registration count.
 - `##reg_confirm_url##`: The URL with which the registration can be confirmed.
 - `##reg_cancel_url##`: The URL with which the registration can be cancelled.
+- `##reg_data_text##`: All of the form data for a text email.
+- `##reg_data_html##`: All of the form data for an HTML email.
 
 
 ## Multiple Languages
