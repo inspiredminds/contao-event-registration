@@ -12,9 +12,12 @@ use Contao\CalendarEventsModel;
 use Contao\CalendarModel;
 use Contao\Controller;
 use Contao\Date;
+use Contao\FormFieldModel;
+use Contao\FormModel;
 use Contao\Input;
 use Contao\Model\Collection;
 use Contao\PageModel;
+use Contao\StringUtil;
 use Contao\Template;
 use Doctrine\DBAL\Connection;
 use InspiredMinds\ContaoEventRegistration\Controller\FrontendModule\EventRegistrationCancelController;
@@ -180,6 +183,9 @@ class EventRegistration
             Controller::loadDataContainer('tl_event_registration');
             $dcaFields = &$GLOBALS['TL_DCA']['tl_event_registration']['fields'];
             $data = $registration->getCombinedRow();
+            $labels = $this->getFormLabels($event, $data);
+            $formData = $registration->getFormRow();
+            $rawData = [];
 
             foreach ($data as $key => $value) {
                 if (isset($dcaFields[$key])) {
@@ -190,9 +196,17 @@ class EventRegistration
                     }
                 }
 
+                $label = isset($labels[$key]) && \is_string($labels[$key]) && '' !== $labels[$key] ? StringUtil::decodeEntities($labels[$key]) : ucfirst($key);
+
                 $tokens['reg_'.$key] = \is_array($value) ? implode(', ', $value) : $value;
+                $tokens['reg_label_'.$key] = $label;
+                if (isset($formData[$key])) {
+                    $rawData[] = $label.': '.$tokens['reg_'.$key];
+                }
             }
 
+            $tokens['reg_data_text'] = implode("\n", $rawData);
+            $tokens['reg_data_html'] = implode('<br>', $rawData);
             $tokens['reg_confirm_url'] = $this->createStatusUpdateUrl($event, $registration, EventRegistrationConfirmController::ACTION);
             $tokens['reg_cancel_url'] = $this->createStatusUpdateUrl($event, $registration, EventRegistrationCancelController::ACTION);
         }
@@ -200,6 +214,24 @@ class EventRegistration
         $tokens['reg_count'] = $this->getRegistrationCount($event);
 
         return $tokens;
+    }
+
+    private function getFormLabels(CalendarEventsModel $event, array $data): array
+    {
+        $labels = [];
+
+        $form = FormModel::findByPk($event->reg_form);
+        if (!$form) {
+            return $labels;
+        }
+        $fields = FormFieldModel::findByPid($form->id);
+        foreach ($fields ?? [] as $field) {
+            if (isset($data[$field->name])) {
+                $labels[$field->name] = $field->label;
+            }
+        }
+
+        return $labels;
     }
 
     /**

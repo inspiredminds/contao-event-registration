@@ -65,6 +65,12 @@ class EventRegistrationModel extends Model
         return $row;
     }
 
+    public function getFormRow(): array
+    {
+        $this->decodeFormData();
+        return $this->decodedFormData;
+    }
+
     private function decodeFormData(): void
     {
         if (null === $this->decodedFormData) {
