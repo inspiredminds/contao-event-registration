@@ -185,6 +185,7 @@ class EventRegistration
             $data = $registration->getCombinedRow();
             $labels = $this->getFormLabels($event, $data);
             $formData = $registration->getFormRow();
+            $rawData = [];
 
             foreach ($data as $key => $value) {
                 if (isset($dcaFields[$key])) {
