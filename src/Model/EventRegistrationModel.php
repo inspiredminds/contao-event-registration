@@ -58,7 +58,7 @@ class EventRegistrationModel extends Model
             unset($formData[$key]);
         }
 
-        $row = array_merge($row, $formData);
+        $row = [...$row, ...$formData];
 
         unset($row['form_data']);
 
@@ -68,6 +68,7 @@ class EventRegistrationModel extends Model
     public function getFormRow(): array
     {
         $this->decodeFormData();
+
         return $this->decodedFormData;
     }
 

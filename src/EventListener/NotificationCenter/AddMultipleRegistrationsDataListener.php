@@ -39,7 +39,7 @@ class AddMultipleRegistrationsDataListener
             return;
         }
 
-        $uuids = array_map(fn (string $uuid): string => $this->db->quote($uuid), $uuids);
+        $uuids = array_map($this->db->quote(...), $uuids);
 
         $registrations = EventRegistrationModel::findBy([\sprintf('uuid IN (%s)', implode(',', $uuids))], []);
 

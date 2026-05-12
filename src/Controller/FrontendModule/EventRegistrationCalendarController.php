@@ -73,7 +73,7 @@ class EventRegistrationCalendarController extends ModuleCalendar
         $this->cal_ctemplate = $this->cal_ctemplate_er ?: 'cal_event_registration';
 
         // Store the current selection
-        $this->Template->selectedIds = array_map('intval', $request->query->get('event') ?? []);
+        $this->Template->selectedIds = array_map(intval(...), $request->query->get('event') ?? []);
 
         parent::compile();
 

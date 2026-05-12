@@ -196,7 +196,7 @@ class EventRegistration
                     }
                 }
 
-                $label = isset($labels[$key]) && \is_string($labels[$key]) && '' !== $labels[$key] ? StringUtil::decodeEntities($labels[$key]) : ucfirst($key);
+                $label = isset($labels[$key]) && \is_string($labels[$key]) && '' !== $labels[$key] ? StringUtil::decodeEntities($labels[$key]) : ucfirst((string) $key);
 
                 $tokens['reg_'.$key] = \is_array($value) ? implode(', ', $value) : $value;
                 $tokens['reg_label_'.$key] = $label;
@@ -214,24 +214,6 @@ class EventRegistration
         $tokens['reg_count'] = $this->getRegistrationCount($event);
 
         return $tokens;
-    }
-
-    private function getFormLabels(CalendarEventsModel $event, array $data): array
-    {
-        $labels = [];
-
-        $form = FormModel::findByPk($event->reg_form);
-        if (!$form) {
-            return $labels;
-        }
-        $fields = FormFieldModel::findByPid($form->id);
-        foreach ($fields ?? [] as $field) {
-            if (isset($data[$field->name])) {
-                $labels[$field->name] = $field->label;
-            }
-        }
-
-        return $labels;
     }
 
     /**
@@ -283,7 +265,7 @@ class EventRegistration
         foreach ($tokens as $k => $value) {
             \assert(\is_array($value));
 
-            $value = array_filter($value, static fn (mixed $v): bool => \is_scalar($v));
+            $value = array_filter($value, \is_scalar(...));
 
             // Form data is usually the same. Do not collapse reg_count though.
             if ('reg_count' !== $k && str_starts_with($k, 'reg_')) {
@@ -431,5 +413,24 @@ class EventRegistration
         }
 
         return $page->getAbsoluteUrl().'?'.http_build_query($params);
+    }
+
+    private function getFormLabels(CalendarEventsModel $event, array $data): array
+    {
+        $labels = [];
+
+        $form = FormModel::findById($event->reg_form);
+        if (!$form) {
+            return $labels;
+        }
+        $fields = FormFieldModel::findByPid($form->id);
+
+        foreach ($fields ?? [] as $field) {
+            if (isset($data[$field->name])) {
+                $labels[$field->name] = $field->label;
+            }
+        }
+
+        return $labels;
     }
 }

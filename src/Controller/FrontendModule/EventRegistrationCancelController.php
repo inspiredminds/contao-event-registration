@@ -106,7 +106,7 @@ class EventRegistrationCancelController extends AbstractFrontendModuleController
         if ($registration->cancelled) {
             $template->class .= ' already-cancelled';
             $template->alreadyCancelled = true;
-            $template->message = array_merge($template->message, [$this->translator->trans('already_cancelled', [], 'im_contao_event_registration')]);
+            $template->message = [...$template->message, $this->translator->trans('already_cancelled', [], 'im_contao_event_registration')];
 
             return;
         }
@@ -115,7 +115,7 @@ class EventRegistrationCancelController extends AbstractFrontendModuleController
         if (!empty($event->reg_cancelEnd) && time() > $event->reg_cancelEnd) {
             $template->class .= ' cannot-cancel';
             $template->cannotCancel = true;
-            $template->message = array_merge($template->message, [$this->translator->trans('cannot_cancel', [], 'im_contao_event_registration')]);
+            $template->message = [...$template->message, $this->translator->trans('cannot_cancel', [], 'im_contao_event_registration')];
 
             return;
         }

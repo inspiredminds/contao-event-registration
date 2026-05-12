@@ -54,7 +54,7 @@ class EventRegistrationFormField extends Widget
             $events[] = $eventsModuleProxy->getProcessedEvent($event);
         }
 
-        return parent::parse(array_merge($attributes ?? [], ['events' => $events]));
+        return parent::parse([...$attributes ?? [], 'events' => $events]);
     }
 
     public function validate(): void

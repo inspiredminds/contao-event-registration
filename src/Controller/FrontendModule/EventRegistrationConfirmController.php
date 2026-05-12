@@ -101,7 +101,7 @@ class EventRegistrationConfirmController extends AbstractFrontendModuleControlle
         if ($registration->confirmed) {
             $template->class .= ' already-confirmed';
             $template->alreadyConfirmed = true;
-            $template->message = array_merge($template->message, [$this->translator->trans('already_confirmed', [], 'im_contao_event_registration')]);
+            $template->message = [...$template->message, $this->translator->trans('already_confirmed', [], 'im_contao_event_registration')];
 
             return;
         }
@@ -110,7 +110,7 @@ class EventRegistrationConfirmController extends AbstractFrontendModuleControlle
         if ($registration->cancelled) {
             $template->class .= ' already-cancelled';
             $template->alreadyCancelled = true;
-            $template->message = array_merge($template->message, [$this->translator->trans('already_cancelled', [], 'im_contao_event_registration')]);
+            $template->message = [...$template->message, $this->translator->trans('already_cancelled', [], 'im_contao_event_registration')];
 
             return;
         }
@@ -119,7 +119,7 @@ class EventRegistrationConfirmController extends AbstractFrontendModuleControlle
         if (!empty($event->reg_regEnd) && time() > $event->reg_regEnd) {
             $template->class .= ' cannot-confirm';
             $template->cannotConfirm = true;
-            $template->message = array_merge($template->message, [$this->translator->trans('cannot_confirm', [], 'im_contao_event_registration')]);
+            $template->message = [...$template->message, $this->translator->trans('cannot_confirm', [], 'im_contao_event_registration')];
 
             return;
         }

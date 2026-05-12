@@ -26,7 +26,7 @@ class FormDataLoadCallbackListener
         }
 
         try {
-            return json_encode(json_decode((string) $value, null, 512, JSON_THROW_ON_ERROR) ?: [], JSON_PRETTY_PRINT);
+            return json_encode(json_decode((string) $value, null, 512, JSON_THROW_ON_ERROR) ?: [], JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR);
         } catch (\JsonException) {
             return null;
         }
