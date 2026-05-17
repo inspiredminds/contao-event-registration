@@ -47,6 +47,8 @@ class EventRegistrationExportController extends AbstractBackendController implem
         /** @var AttributeBagInterface $backendSession */
         $backendSession = $request->getSession()->getBag('contao_backend');
 
+        System::loadLanguageFile('default');
+
         // Get the form
         $form = $this->buildForm($request, $backendSession);
 
