@@ -10,7 +10,6 @@ services:
         autowire: true
         autoconfigure: true
         bind:
-            $nodeManager: '@terminal42_node.manager'
             $bundles: '%kernel.bundles%'
             $supportedNotificationTypes: '%contao_event_registration.tokens.supported_notifications%'
     
