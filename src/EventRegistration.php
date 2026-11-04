@@ -318,8 +318,10 @@ class EventRegistration
 
     /**
      * Creates the URL for updating the status to confirmed or cancelled.
+     *
+     * @param array<string, mixed> $params additional query parameters; "action" and "uuid" cannot be overridden
      */
-    public function createStatusUpdateUrl(CalendarEventsModel $event, EventRegistrationModel $registration, string $action): string
+    public function createStatusUpdateUrl(CalendarEventsModel $event, EventRegistrationModel $registration, string $action, array $params = []): string
     {
         if (!\in_array($action, [EventRegistrationConfirmController::ACTION, EventRegistrationCancelController::ACTION], true)) {
             throw new \InvalidArgumentException('Invalid action parameter "'.$action.'."');
@@ -328,7 +330,7 @@ class EventRegistration
         $params = [
             'action' => $action,
             'uuid' => $registration->uuid,
-        ];
+        ] + $params;
 
         $calendar = CalendarModel::findById($event->pid);
 
@@ -361,8 +363,9 @@ class EventRegistration
 
     /**
      * @param Collection|list<EventRegistrationModel> $registrations
+     * @param array<string, mixed>                    $params        additional query parameters; "action" and "uuid" cannot be overridden
      */
-    public function createStatusUpdateUrlMultiple(Collection|array $registrations, string $action): string
+    public function createStatusUpdateUrlMultiple(Collection|array $registrations, string $action, array $params = []): string
     {
         if (!\in_array($action, [EventRegistrationConfirmController::ACTION, EventRegistrationCancelController::ACTION], true)) {
             throw new \InvalidArgumentException('Invalid action parameter "'.$action.'."');
@@ -380,7 +383,7 @@ class EventRegistration
         $params = [
             'action' => $action,
             'uuid' => array_map(static fn (EventRegistrationModel $reg): string => $reg->uuid, $registrations),
-        ];
+        ] + $params;
 
         if (!$firstEvent = CalendarEventsModel::findById(reset($registrations)->pid)) {
             throw new \RuntimeException('Could not load event.');

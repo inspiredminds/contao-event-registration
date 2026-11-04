@@ -84,7 +84,8 @@ class EventRegistrationCancelController extends AbstractFrontendModuleController
             $template->confirmationUrl = $this->eventRegistration->createStatusUpdateUrlMultiple(
                 $registrations,
                 self::ACTION,
-            ).'&confirm=1';
+                ['confirm' => 1],
+            );
         }
 
         $tokens = $this->eventRegistration->getSimpleTokensForMultipleRegistrations($registrations);
