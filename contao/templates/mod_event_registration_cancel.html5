@@ -4,6 +4,13 @@
 
   <?php if ($this->message): ?>
     <p><?= $this->message ?></p>
+  <?php elseif ($this->confirmationRequired): ?>
+    <p><?= $this->trans('cancel_confirmation', [], 'im_contao_event_registration') ?></p>
+    <p>
+      <a href="<?= Contao\StringUtil::specialcharsAttribute($this->confirmationUrl) ?>">
+        <?= $this->trans('cancel_confirmation_yes', [], 'im_contao_event_registration') ?>
+      </a>
+    </p>
   <?php else: ?>
     <?= $this->content ?>
   <?php endif; ?>

@@ -9,7 +9,9 @@ export: Export
 event_registration_export: Event registration export for "event"
 delimiter_comma: '<code>,</code> (Comma)'
 delimiter_semi: '<code>;</code> (Semicolon)'
-already_confirmed: This event registration has already been confirmed.
+already_confirmed: The double opt-in confirmation for this registration has already been completed. No further confirmation is required.
+cancel_confirmation: Are you sure you want to cancel your participation?
+cancel_confirmation_yes: Yes, cancel participation
 already_cancelled: This event registration has already been cancelled.
 cannot_confirm: Registrations for this event cannot be confirmed anymore.
 cannot_cancel: Registrations for this event cannot be cancelled anymore.

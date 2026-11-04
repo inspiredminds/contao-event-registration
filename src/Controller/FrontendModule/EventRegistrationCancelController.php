@@ -63,6 +63,7 @@ class EventRegistrationCancelController extends AbstractFrontendModuleController
 
         $registrations = [];
         $template->message = [];
+        $template->confirmationRequired = false;
 
         foreach ((array) $uuids as $uuid) {
             if (!$registration = EventRegistrationModel::findOneByUuid($uuid)) {
@@ -74,10 +75,18 @@ class EventRegistrationCancelController extends AbstractFrontendModuleController
             $template->event = $event;
             $template->registration = $registration;
 
-            $this->processCancel($template, $event, $registration);
+            $this->processCancel($template, $event, $registration, $request->query->getBoolean('confirm'));
         }
 
         $template->message = implode(' ', array_unique((array) $template->message));
+
+        if ($template->confirmationRequired) {
+            $template->confirmationUrl = $this->eventRegistration->createStatusUpdateUrlMultiple(
+                $registrations,
+                self::ACTION,
+                ['confirm' => 1],
+            );
+        }
 
         $tokens = $this->eventRegistration->getSimpleTokensForMultipleRegistrations($registrations);
 
@@ -89,19 +98,27 @@ class EventRegistrationCancelController extends AbstractFrontendModuleController
             return null;
         };
 
-        // Send notification
-        if ($model->nc_notification) {
-            $this->notificationCenter->sendNotification($model->nc_notification, $tokens);
-        }
+        // Do not send notifications or process waiting lists while the
+        // cancellation is still awaiting confirmation.
+        if (!$template->confirmationRequired) {
+            // Send notification
+            if ($model->nc_notification) {
+                $this->notificationCenter->sendNotification($model->nc_notification, $tokens);
+            }
 
-        // Process waiting lists
-        ($this->waitingListChecker)($event);
+            // Process waiting lists
+            ($this->waitingListChecker)($event);
+        }
 
         return $template->getResponse();
     }
 
-    private function processCancel(Template $template, CalendarEventsModel $event, EventRegistrationModel $registration): void
-    {
+    private function processCancel(
+        Template $template,
+        CalendarEventsModel $event,
+        EventRegistrationModel $registration,
+        bool $confirmed,
+    ): void {
         // Check if already cancelled
         if ($registration->cancelled) {
             $template->class .= ' already-cancelled';
@@ -116,6 +133,14 @@ class EventRegistrationCancelController extends AbstractFrontendModuleController
             $template->class .= ' cannot-cancel';
             $template->cannotCancel = true;
             $template->message = [...$template->message, $this->translator->trans('cannot_cancel', [], 'im_contao_event_registration')];
+
+            return;
+        }
+
+        // Show a confirmation page before changing the registration status.
+        if (!$confirmed) {
+            $template->class .= ' cancellation-confirmation';
+            $template->confirmationRequired = true;
 
             return;
         }
