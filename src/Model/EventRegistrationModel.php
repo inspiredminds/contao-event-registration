@@ -20,6 +20,7 @@ use Contao\Model;
  * @property int    $member
  * @property int    $amount
  * @property bool   $confirmed
+ * @property int|null $confirmed_at
  * @property bool   $cancelled
  * @property string $form_data
  */

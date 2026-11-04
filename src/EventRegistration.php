@@ -111,19 +111,37 @@ class EventRegistration
     {
         $event = $this->getMainEvent($event);
 
-        $query = 'SELECT SUM(amount) FROM tl_event_registration WHERE pid = ? AND cancelled != 1';
+        // Registrations only consume capacity once they are confirmed. For events
+        // without DOI confirmation, legacy records with confirmed=0 are still
+        // considered active registrations. New registrations without DOI are
+        // stored as confirmed immediately.
+        $query = <<<'SQL'
+            SELECT SUM(r.amount)
+            FROM tl_event_registration r
+            INNER JOIN tl_calendar_events e ON e.id = r.pid
+            WHERE r.pid = ?
+              AND r.cancelled != 1
+              AND (r.confirmed = 1 OR e.reg_requireConfirm != 1)
+        SQL;
 
-        if ($event->reg_requireConfirm) {
-            $query .= ' AND confirmed = 1';
-        }
+        $params = [(int) $event->id];
 
         if ('' !== (string) $event->reg_max && $event->reg_enableWaitingList && $excludeWaitingList) {
-            $query .= ' AND waiting != 1';
+            $query .= ' AND r.waiting != 1';
         }
 
-        $query .= ';';
+        return (int) $this->db->fetchOne($query, $params);
+    }
 
-        return (int) $this->db->fetchOne($query, [(int) $event->id]);
+    public function isRegistrationOnWaitingList(CalendarEventsModel $event, int $amount): bool
+    {
+        $event = $this->getMainEvent($event);
+
+        if ('' === (string) $event->reg_max) {
+            return false;
+        }
+
+        return $this->getRegistrationCount($event, true) + $amount > (int) $event->reg_max;
     }
 
     public function getRegistrationForm(CalendarEventsModel $event): string
