@@ -22,8 +22,10 @@ use Contao\StringUtil;
 use Contao\Template;
 use InspiredMinds\ContaoEventRegistration\EventRegistration;
 use InspiredMinds\ContaoEventRegistration\Model\EventRegistrationModel;
+use InspiredMinds\ContaoEventRegistration\WaitingListChecker;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Lock\LockFactory;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Terminal42\NodeBundle\NodeManager;
 use Terminal42\NotificationCenterBundle\NotificationCenter;
@@ -43,6 +45,7 @@ class EventRegistrationConfirmController extends AbstractFrontendModuleControlle
         private readonly TranslatorInterface $translator,
         private readonly SimpleTokenParser $simpleTokenParser,
         private readonly NotificationCenter $notificationCenter,
+        private readonly LockFactory $lockFactory,
     ) {
     }
 
@@ -100,36 +103,65 @@ class EventRegistrationConfirmController extends AbstractFrontendModuleControlle
 
     private function processConfirm(Template $template, CalendarEventsModel $event, EventRegistrationModel $registration): bool
     {
-        // A confirmed registration is final for the DOI flow. Check this before
-        // any event or waiting-list related state is evaluated.
-        if ($registration->confirmed) {
-            $template->class .= ' already-confirmed';
-            $template->alreadyConfirmed = true;
-            $template->message = [...$template->message, $this->translator->trans('already_confirmed', [], 'im_contao_event_registration')];
+        // The confirmation decides whether the registration gets a slot or is
+        // put on the waiting list. It therefore shares the lock with new
+        // registrations and the waiting list processing. The registration is
+        // reloaded after acquiring the lock, so concurrent confirmation
+        // requests cannot confirm the same registration twice.
+        $lock = $this->lockFactory->createLock(WaitingListChecker::getLockName());
+        $lock->acquire(true);
 
-            return false;
+        try {
+            if (!$registration = EventRegistrationModel::findByPk((int) $registration->id)) {
+                return false;
+            }
+
+            // A confirmed registration is final for the DOI flow.
+            if ($registration->confirmed) {
+                $template->class .= ' already-confirmed';
+                $template->alreadyConfirmed = true;
+                $template->message = [...$template->message, $this->translator->trans('already_confirmed', [], 'im_contao_event_registration')];
+
+                return false;
+            }
+
+            if ($registration->cancelled) {
+                $template->class .= ' already-cancelled';
+                $template->alreadyCancelled = true;
+                $template->message = [...$template->message, $this->translator->trans('already_cancelled', [], 'im_contao_event_registration')];
+
+                return false;
+            }
+
+            if (!empty($event->reg_regEnd) && time() > $event->reg_regEnd) {
+                $template->class .= ' cannot-confirm';
+                $template->cannotConfirm = true;
+                $template->message = [...$template->message, $this->translator->trans('cannot_confirm', [], 'im_contao_event_registration')];
+
+                return false;
+            }
+
+            $waiting = $this->eventRegistration->isRegistrationOnWaitingList($event, (int) $registration->amount);
+
+            if ($waiting && !$event->reg_enableWaitingList) {
+                $template->class .= ' cannot-confirm';
+                $template->cannotConfirm = true;
+                $template->message = [...$template->message, $this->translator->trans('cannot_confirm', [], 'im_contao_event_registration')];
+
+                return false;
+            }
+
+            $now = time();
+
+            $registration->confirmed = true;
+            $registration->waiting = $waiting;
+            $registration->confirmed_at = $now;
+            $registration->tstamp = $now;
+            $registration->save();
+
+            return true;
+        } finally {
+            $lock->release();
         }
-
-        // Check if already cancelled
-        if ($registration->cancelled) {
-            $template->class .= ' already-cancelled';
-            $template->alreadyCancelled = true;
-            $template->message = [...$template->message, $this->translator->trans('already_cancelled', [], 'im_contao_event_registration')];
-
-            return false;
-        }
-
-        // Check if past registration date
-        if (!empty($event->reg_regEnd) && time() > $event->reg_regEnd) {
-            $template->class .= ' cannot-confirm';
-            $template->cannotConfirm = true;
-            $template->message = [...$template->message, $this->translator->trans('cannot_confirm', [], 'im_contao_event_registration')];
-
-            return false;
-        }
-
-        $registration->confirmed = true;
-        $registration->save();
-        return true;
     }
 }

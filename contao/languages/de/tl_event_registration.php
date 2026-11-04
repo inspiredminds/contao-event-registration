@@ -12,5 +12,6 @@ $GLOBALS['TL_LANG']['tl_event_registration']['form'] = ['Formular', ''];
 $GLOBALS['TL_LANG']['tl_event_registration']['member'] = ['Mitglied', ''];
 $GLOBALS['TL_LANG']['tl_event_registration']['amount'] = ['Anzahl', 'Anzahl der Personen für diese Registrierung.'];
 $GLOBALS['TL_LANG']['tl_event_registration']['confirmed'] = ['Bestätigt', 'Ob diese Registrierung bestätigt wurde.'];
+$GLOBALS['TL_LANG']['tl_event_registration']['confirmed_at'] = ['Bestätigt am', 'Zeitpunkt der DOI-Bestätigung.'];
 $GLOBALS['TL_LANG']['tl_event_registration']['cancelled'] = ['Storniert', 'Ob diese Registrierung storniert wurde.'];
 $GLOBALS['TL_LANG']['tl_event_registration']['form_data'] = ['Formulardaten', 'Die Formulardaten der Registrierung.'];

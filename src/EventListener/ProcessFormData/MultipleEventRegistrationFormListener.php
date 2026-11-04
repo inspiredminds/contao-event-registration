@@ -56,7 +56,7 @@ class MultipleEventRegistrationFormListener
             return;
         }
 
-        $lock = $this->lockFactory->createLock(WaitingListChecker::class);
+        $lock = $this->lockFactory->createLock(WaitingListChecker::getLockName());
         $lock->acquire(true);
 
         try {
@@ -79,7 +79,9 @@ class MultipleEventRegistrationFormListener
                 }
 
                 $amount = max(1, (int) ($submittedData['amount'] ?? 1));
-                $waiting = '' !== (string) $event->reg_max && ($this->eventRegistration->getRegistrationCount($event, true) + $amount) > $event->reg_max;
+                $confirmed = !$event->reg_requireConfirm;
+                $confirmedAt = $confirmed ? time() : null;
+                $waiting = $confirmed && $this->eventRegistration->isRegistrationOnWaitingList($event, $amount);
 
                 $registration = new EventRegistrationModel();
                 $registration->pid = (int) $event->id;
@@ -90,6 +92,8 @@ class MultipleEventRegistrationFormListener
                 $registration->member = (int) $this->getMember()?->id ?? 0;
                 $registration->amount = $amount;
                 $registration->waiting = $waiting;
+                $registration->confirmed = $confirmed;
+                $registration->confirmed_at = $confirmedAt;
                 $registration->form_data = json_encode($submittedData, JSON_THROW_ON_ERROR);
 
                 $registration->save();
