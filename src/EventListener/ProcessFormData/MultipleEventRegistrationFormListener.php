@@ -56,7 +56,7 @@ class MultipleEventRegistrationFormListener
             return;
         }
 
-        $lock = $this->lockFactory->createLock(WaitingListChecker::class);
+        $lock = $this->lockFactory->createLock(WaitingListChecker::getLockName());
         $lock->acquire(true);
 
         try {

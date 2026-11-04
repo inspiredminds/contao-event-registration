@@ -26,13 +26,25 @@ class WaitingListChecker
     }
 
     /**
+     * Returns the name of the lock that serializes all operations affecting
+     * the capacity of events: new registrations, DOI confirmations and the
+     * waiting list processing. The project specific hash prevents collisions
+     * between multiple installations on the same system, as the default lock
+     * stores are shared system wide.
+     */
+    public static function getLockName(): string
+    {
+        return 'contao_event_registration_'.hash('xxh3', __FILE__);
+    }
+
+    /**
      * @param CalendarEventsModel $event checks a single event, otherwise all upcoming events
      */
     public function __invoke(CalendarEventsModel|null $event = null): void
     {
         $this->framework->initialize();
 
-        $lock = $this->lockFactory->createLock(self::class);
+        $lock = $this->lockFactory->createLock(self::getLockName());
         $lock->acquire(true);
 
         try {

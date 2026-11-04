@@ -21,8 +21,8 @@ use Contao\ModuleModel;
 use Contao\StringUtil;
 use Contao\Template;
 use InspiredMinds\ContaoEventRegistration\EventRegistration;
-use InspiredMinds\ContaoEventRegistration\WaitingListChecker;
 use InspiredMinds\ContaoEventRegistration\Model\EventRegistrationModel;
+use InspiredMinds\ContaoEventRegistration\WaitingListChecker;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Lock\LockFactory;
@@ -103,10 +103,12 @@ class EventRegistrationConfirmController extends AbstractFrontendModuleControlle
 
     private function processConfirm(Template $template, CalendarEventsModel $event, EventRegistrationModel $registration): bool
     {
-        // Serialize confirmation with waiting-list processing.
-        // The registration is reloaded after acquiring the lock so concurrent
-        // confirmation requests cannot confirm the same registration twice.
-        $lock = $this->lockFactory->createLock(WaitingListChecker::class);
+        // The confirmation decides whether the registration gets a slot or is
+        // put on the waiting list. It therefore shares the lock with new
+        // registrations and the waiting list processing. The registration is
+        // reloaded after acquiring the lock, so concurrent confirmation
+        // requests cannot confirm the same registration twice.
+        $lock = $this->lockFactory->createLock(WaitingListChecker::getLockName());
         $lock->acquire(true);
 
         try {
